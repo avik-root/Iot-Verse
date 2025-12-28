@@ -15,9 +15,9 @@
     }
     
     .inr-price::before {
-        content: "₹";
+        content: "";
         font-weight: 600;
-        margin-right: 2px;
+        margin-right: 0;
     }
     
     .price-change {
@@ -90,7 +90,7 @@
                 {% endif %}
                 
                 <div class="mb-4">
-                    <h2 class="inr-price">{{ "{:,.2f}".format(product.price) }}</h2>
+                    <h2 class="inr-price" data-price-inr="{{ product.price }}" data-original-text="{{ "{:,.2f}".format(product.price) }}">{{ "{:,.2f}".format(product.price) }}</h2>
                     <p class="text-muted">Current Price</p>
                 </div>
                 
@@ -106,7 +106,7 @@
                     <div class="col-6">
                         <div class="card bg-light">
                             <div class="card-body text-center">
-                                <h5 class="card-title inr-price">{{ "{:,.2f}".format(product.price * product.quantity) }}</h5>
+                                <h5 class="card-title inr-price" data-price-inr="{{ product.price * product.quantity }}" data-original-text="{{ "{:,.2f}".format(product.price * product.quantity) }}">{{ "{:,.2f}".format(product.price * product.quantity) }}</h5>
                                 <p class="card-text text-muted">Total Value</p>
                             </div>
                         </div>
@@ -118,7 +118,7 @@
                     <div class="col-12">
                         <div class="card bg-primary bg-opacity-10">
                             <div class="card-body text-center">
-                                <h5 class="card-title inr-price" style="color: #0d6efd;">{{ "{:,.2f}".format(average_price) }}</h5>
+                                <h5 class="card-title inr-price" style="color: #0d6efd;" data-price-inr="{{ average_price }}" data-original-text="{{ "{:,.2f}".format(average_price) }}">{{ "{:,.2f}".format(average_price) }}</h5>
                                 <p class="card-text text-muted">Average Price (History)</p>
                             </div>
                         </div>
@@ -170,7 +170,7 @@
                 {% if price_graph %}
                 <div class="text-center">
                     <img src="{{ price_graph }}" alt="Price History Graph" class="img-fluid">
-                    <p class="currency-note mt-2">Price history shown in Indian Rupees (₹)</p>
+                    <p class="currency-note mt-2">Price history shown in local currency</p>
                 </div>
                 {% else %}
                 <div class="text-center py-4">
@@ -195,7 +195,7 @@
                             {% for history in price_history|reverse %}
                             <tr>
                                 <td>{{ history.date[:10] }}</td>
-                                <td class="inr-price">{{ "{:,.2f}".format(history.price) }}</td>
+                                <td class="inr-price" data-price-inr="{{ history.price }}" data-original-text="{{ "{:,.2f}".format(history.price) }}">{{ "{:,.2f}".format(history.price) }}</td>
                                 <td>
                                     {% if loop.first %}
                                     <span class="badge bg-secondary">Current</span>
@@ -203,7 +203,7 @@
                                     {% set change = previous_price - history.price %}
                                     <span class="price-change {% if change > 0 %}price-up{% elif change < 0 %}price-down{% else %}price-same{% endif %}">
                                         {% if change > 0 %}▲{% elif change < 0 %}▼{% endif %}
-                                        ₹{{ "%.2f"|format(change|abs) }}
+                                        {{ "%.2f"|format(change|abs) }}
                                     </span>
                                     {% endif %}
                                 </td>

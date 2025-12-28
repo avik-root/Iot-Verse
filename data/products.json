@@ -221,6 +221,19 @@
         "index": 16
     },
     {
+        "id": "f6a8ae3a-2c28-469f-b3cb-0cb6fda4309c",
+        "name": "SOLAR PANNEL 80X40",
+        "price": 40.0,
+        "quantity": 2,
+        "availability": "In Stock",
+        "type": "PANNEL 5V",
+        "description": "A solar panel with dimensions of 80x40 mm designed to convert sunlight into electrical energy, specifically providing a 5V output. It's used for powering small IoT devices or charging batteries in remote or low-power applications.",
+        "image": "f6a8ae3a-2c28-469f-b3cb-0cb6fda4309c_80.jpg",
+        "created_at": "2025-12-28T01:20:22.256244",
+        "last_updated": "2025-12-28T03:31:51.269304",
+        "index": 17
+    },
+    {
         "id": "4d4ab73f-30d5-41b8-8866-060b154866da",
         "name": "SOLAR PANNEL 69X66",
         "price": 60.0,
@@ -231,7 +244,7 @@
         "image": "4d4ab73f-30d5-41b8-8866-060b154866da_69.jpg",
         "created_at": "2025-12-28T01:20:22.256207",
         "last_updated": "2025-12-28T03:31:30.574586",
-        "index": 17
+        "index": 18
     },
     {
         "id": "61f92a09-3c67-4435-9e73-01ed31f13769",
@@ -244,19 +257,6 @@
         "image": "61f92a09-3c67-4435-9e73-01ed31f13769_12.jpg",
         "created_at": "2025-12-28T01:20:22.256225",
         "last_updated": "2025-12-28T20:22:12.573327",
-        "index": 18
-    },
-    {
-        "id": "f6a8ae3a-2c28-469f-b3cb-0cb6fda4309c",
-        "name": "SOLAR PANNEL 80X40",
-        "price": 40.0,
-        "quantity": 2,
-        "availability": "In Stock",
-        "type": "PANNEL 5V",
-        "description": "A solar panel with dimensions of 80x40 mm designed to convert sunlight into electrical energy, specifically providing a 5V output. It's used for powering small IoT devices or charging batteries in remote or low-power applications.",
-        "image": "f6a8ae3a-2c28-469f-b3cb-0cb6fda4309c_80.jpg",
-        "created_at": "2025-12-28T01:20:22.256244",
-        "last_updated": "2025-12-28T03:31:51.269304",
         "index": 19
     },
     {
@@ -1055,15 +1055,28 @@
     {
         "id": "974605c1-63b2-42ea-b74b-3f15702bf906",
         "name": "SD CARD 16GB",
-        "price": 1600.0,
+        "price": 399.0,
         "quantity": 1,
-        "availability": "In Stock",
+        "availability": "Out of Stock",
         "type": "MEMORY CARD",
         "description": "An SD CARD 16GB is a non-volatile flash memory card used for storing digital information. It is commonly used in devices like cameras, smartphones, and IoT projects (like Raspberry Pi) to store operating systems, data, and applications.",
         "image": "974605c1-63b2-42ea-b74b-3f15702bf906_sdcard.png",
         "created_at": "2025-12-28T01:20:22.257542",
-        "last_updated": "2025-12-28T17:06:47.139866",
+        "last_updated": "2025-12-28T23:37:16.919971",
         "index": 81
+    },
+    {
+        "id": "cae6cefc-4d3a-4708-a936-d418d3e9e1a4",
+        "name": "SD CARD 16GB",
+        "price": 719.0,
+        "quantity": 1,
+        "availability": "In Stock",
+        "type": "MEMORY CARD",
+        "description": "An SD CARD 32GB is a non-volatile flash memory card used for storing digital information. It is commonly used in devices like cameras, smartphones, and IoT projects (like Raspberry Pi) to store operating systems, data, and applications.",
+        "image": "cae6cefc-4d3a-4708-a936-d418d3e9e1a4_32GB.jpg",
+        "index": 82,
+        "created_at": "2025-12-28T23:37:02.973292",
+        "last_updated": "2025-12-28T23:37:02.973324"
     },
     {
         "id": "00ec1e35-ea78-4773-b34a-f0e2cc8f09a9",
@@ -1076,7 +1089,7 @@
         "image": "00ec1e35-ea78-4773-b34a-f0e2cc8f09a9_lan.png",
         "created_at": "2025-12-28T01:20:22.257560",
         "last_updated": "2025-12-28T17:07:03.187993",
-        "index": 82
+        "index": 83
     },
     {
         "id": "1b97f99b-19a2-41b0-8b5f-ea3d3f754b0f",
@@ -1089,7 +1102,7 @@
         "image": "1b97f99b-19a2-41b0-8b5f-ea3d3f754b0f_case.jpg",
         "created_at": "2025-12-28T01:20:22.257579",
         "last_updated": "2025-12-28T03:45:40.362572",
-        "index": 83
+        "index": 84
     },
     {
         "id": "61a50ccd-58ae-45b7-ae00-caddaf0cace0",
@@ -1102,7 +1115,7 @@
         "image": "61a50ccd-58ae-45b7-ae00-caddaf0cace0_picharger.png",
         "created_at": "2025-12-28T01:20:22.257597",
         "last_updated": "2025-12-28T16:34:32.107867",
-        "index": 84
+        "index": 85
     },
     {
         "id": "083819ba-fe3a-4d34-9aa5-6932b0a0933e",
@@ -1115,7 +1128,7 @@
         "image": "083819ba-fe3a-4d34-9aa5-6932b0a0933e_12vstrip.png",
         "created_at": "2025-12-28T01:20:22.257615",
         "last_updated": "2025-12-28T17:07:46.901672",
-        "index": 85
+        "index": 86
     },
     {
         "id": "ad4a4c64-9271-40d9-a48e-1b1b2cc854d7",
@@ -1128,7 +1141,7 @@
         "image": "ad4a4c64-9271-40d9-a48e-1b1b2cc854d7_wb2812.jpg",
         "created_at": "2025-12-28T01:20:22.257636",
         "last_updated": "2025-12-28T17:08:00.751435",
-        "index": 86
+        "index": 87
     },
     {
         "id": "1df9f3b5-7699-4ef8-a5fa-917ba6006f83",
@@ -1141,7 +1154,7 @@
         "image": "1df9f3b5-7699-4ef8-a5fa-917ba6006f83_12vstrip.jpg",
         "created_at": "2025-12-28T01:20:22.257655",
         "last_updated": "2025-12-28T17:08:13.021582",
-        "index": 87
+        "index": 88
     },
     {
         "id": "0ccc2c66-7a9d-4851-8902-8f511916d687",
@@ -1154,7 +1167,7 @@
         "image": "0ccc2c66-7a9d-4851-8902-8f511916d687_12v1a_both_pin.png",
         "created_at": "2025-12-28T01:20:22.257673",
         "last_updated": "2025-12-28T17:08:22.664551",
-        "index": 88
+        "index": 89
     },
     {
         "id": "e661291c-e677-40b0-b199-c8509722d289",
@@ -1167,7 +1180,7 @@
         "image": "e661291c-e677-40b0-b199-c8509722d289_push.jpg",
         "created_at": "2025-12-28T01:20:22.257691",
         "last_updated": "2025-12-28T17:08:32.711808",
-        "index": 89
+        "index": 90
     },
     {
         "id": "21d6efa9-7402-4170-b465-a5ec531ad0d1",
@@ -1180,7 +1193,7 @@
         "image": "21d6efa9-7402-4170-b465-a5ec531ad0d1_slide_switch.jpg",
         "created_at": "2025-12-28T01:20:22.257727",
         "last_updated": "2025-12-28T17:14:05.157263",
-        "index": 90
+        "index": 91
     },
     {
         "id": "184d559c-c4b9-499a-8dc5-d9a69eecf192",
@@ -1193,7 +1206,7 @@
         "image": "184d559c-c4b9-499a-8dc5-d9a69eecf192_female_iot.png",
         "created_at": "2025-12-28T01:20:22.257746",
         "last_updated": "2025-12-28T17:14:35.272829",
-        "index": 91
+        "index": 92
     },
     {
         "id": "314dfa55-0af4-4c68-b437-7c3f59f08c3c",
@@ -1206,7 +1219,7 @@
         "image": "314dfa55-0af4-4c68-b437-7c3f59f08c3c_maletomaleiot.jpg",
         "created_at": "2025-12-28T01:20:22.257765",
         "last_updated": "2025-12-28T17:14:47.730383",
-        "index": 92
+        "index": 93
     },
     {
         "id": "81d344d3-1d23-4799-b3c3-a5526d3bd710",
@@ -1219,7 +1232,7 @@
         "image": "81d344d3-1d23-4799-b3c3-a5526d3bd710_micro-hdmi-cable-for-raspberrypi-550x550w.jpg",
         "created_at": "2025-12-28T01:20:22.257783",
         "last_updated": "2025-12-28T16:25:55.919566",
-        "index": 93
+        "index": 94
     },
     {
         "id": "99e76799-0197-4535-b7ec-2c8018bd04b4",
@@ -1232,6 +1245,6 @@
         "image": "99e76799-0197-4535-b7ec-2c8018bd04b4_12vfemalesocket.png",
         "created_at": "2025-12-28T01:20:22.257802",
         "last_updated": "2025-12-28T17:15:03.961618",
-        "index": 94
+        "index": 95
     }
 ]

@@ -11,6 +11,7 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/darkmode.css') }}">
     {% if request.path.startswith('/admin') %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     {% endif %}
@@ -51,7 +52,7 @@
             
             <div class="collapse navbar-collapse" id="navbarNav">
                 <!-- Quick Search Bar -->
-                <form class="navbar-search me-3" action="{{ url_for('search') }}" method="get" style="width: 350px;">
+                <form class="navbar-search me-lg-3" action="{{ url_for('search') }}" method="get" style="min-width: 300px;">
                     <div class="input-group input-group-sm">
                         <input class="form-control form-control-sm" type="text" name="q" placeholder="Search IoT devices..." 
                                value="{{ request.args.get('q', '') }}" aria-label="Search">
@@ -60,6 +61,27 @@
                         </button>
                     </div>
                 </form>
+                
+                <div class="d-flex flex-row flex-lg-row gap-2 mt-2 mt-lg-0 align-items-center">
+                    <!-- Dark Mode Toggle -->
+                    <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode" onclick="toggleDarkMode()"></button>
+                    
+                    <!-- Currency Selector -->
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="currencyDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-cash-coin"></i> <span id="currencyDisplay">INR</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="currencyDropdown">
+                            {% if currencies %}
+                                {% for currency in currencies %}
+                                <li><a class="dropdown-item" href="#" onclick="changeCurrency('{{ currency }}'); return false;">
+                                    {{ currency }} <span class="text-muted">({{ symbols[currency] }})</span>
+                                </a></li>
+                                {% endfor %}
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
                 
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
@@ -140,7 +162,48 @@
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     
+    <!-- Dark Mode Script -->
+    <script>
+        // Initialize dark mode from localStorage
+        function initializeDarkMode() {
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            const toggle = document.getElementById('darkModeToggle');
+            
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                if (toggle) toggle.classList.add('active');
+            }
+        }
+        
+        // Toggle dark mode
+        function toggleDarkMode() {
+            const body = document.body;
+            const toggle = document.getElementById('darkModeToggle');
+            
+            // Add transition class temporarily
+            body.classList.add('transition-theme');
+            
+            // Toggle classes
+            body.classList.toggle('dark-mode');
+            if (toggle) toggle.classList.toggle('active');
+            
+            // Save preference
+            const isDarkMode = body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
+            
+            // Remove transition class after animation
+            setTimeout(() => body.classList.remove('transition-theme'), 300);
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initializeDarkMode);
+        
+        // Also initialize immediately for faster application
+        initializeDarkMode();
+    </script>
+    
     <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/currency.js') }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% if request.path.startswith('/admin') %}
     <script src="{{ url_for('static', filename='js/admin.js') }}"></script>

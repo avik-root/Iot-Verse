@@ -100,6 +100,45 @@ def save_price_history(history):
     with open('data/price_history.json', 'w') as f:
         json.dump(history, f, indent=4, default=str)
 
+# Currency exchange rates (INR as base)
+EXCHANGE_RATES = {
+    'INR': 1.0,
+    'USD': 0.012,      # 1 INR = 0.012 USD
+    'EUR': 0.011,      # 1 INR = 0.011 EUR
+    'GBP': 0.0095,     # 1 INR = 0.0095 GBP
+    'JPY': 1.73,       # 1 INR = 1.73 JPY
+    'AUD': 0.019,      # 1 INR = 0.019 AUD
+    'CAD': 0.017,      # 1 INR = 0.017 CAD
+    'SGD': 0.016,      # 1 INR = 0.016 SGD
+    'HKD': 0.094,      # 1 INR = 0.094 HKD
+    'NZD': 0.021,      # 1 INR = 0.021 NZD
+    'CHF': 0.011,      # 1 INR = 0.011 CHF
+}
+
+CURRENCY_SYMBOLS = {
+    'INR': '₹',
+    'USD': '$',
+    'EUR': '€',
+    'GBP': '£',
+    'JPY': '¥',
+    'AUD': 'A$',
+    'CAD': 'C$',
+    'SGD': 'S$',
+    'HKD': 'HK$',
+    'NZD': 'NZ$',
+    'CHF': 'Fr',
+}
+
+def convert_price(amount_inr, target_currency='INR'):
+    """Convert price from INR to target currency"""
+    if target_currency not in EXCHANGE_RATES:
+        target_currency = 'INR'
+    return round(amount_inr * EXCHANGE_RATES[target_currency], 2)
+
+def get_currency_symbol(currency='INR'):
+    """Get currency symbol"""
+    return CURRENCY_SYMBOLS.get(currency, currency)
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
@@ -404,7 +443,8 @@ def home():
     types = sorted(list(set(p.get('type', '') for p in products if p.get('type'))))
     # Calculate total inventory value
     total_value = sum(p['price'] * p['quantity'] for p in products)
-    return render_template('home.html', products=products, types=types, total_value=total_value)
+    return render_template('home.html', products=products, types=types, total_value=total_value, 
+                         currencies=list(EXCHANGE_RATES.keys()), symbols=CURRENCY_SYMBOLS)
 
 @app.route('/product/<product_id>')
 def product_detail(product_id):
@@ -432,7 +472,9 @@ def product_detail(product_id):
                          product=product, 
                          price_graph=price_graph,
                          price_history=product_history,
-                         average_price=average_price)
+                         average_price=average_price,
+                         currencies=list(EXCHANGE_RATES.keys()),
+                         symbols=CURRENCY_SYMBOLS)
 
 @app.route('/search')
 def search():
@@ -741,6 +783,33 @@ def api_stats():
         'total_quantity': sum(p['quantity'] for p in products)
     }
     return jsonify(stats)
+
+@app.route('/api/convert-currency', methods=['POST'])
+def convert_currency_api():
+    """API endpoint to convert currency"""
+    data = request.get_json()
+    amount = float(data.get('amount', 0))
+    target_currency = data.get('currency', 'INR')
+    
+    converted = convert_price(amount, target_currency)
+    symbol = get_currency_symbol(target_currency)
+    
+    return jsonify({
+        'original_amount': amount,
+        'original_currency': 'INR',
+        'converted_amount': converted,
+        'target_currency': target_currency,
+        'symbol': symbol
+    })
+
+@app.route('/api/currencies')
+def get_currencies():
+    """Get list of available currencies"""
+    return jsonify({
+        'currencies': list(EXCHANGE_RATES.keys()),
+        'symbols': CURRENCY_SYMBOLS,
+        'rates': EXCHANGE_RATES
+    })
 
 @app.route('/api/products/reorder', methods=['POST'])
 @login_required

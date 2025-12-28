@@ -198,3 +198,58 @@ body {
 .badge-instock { background-color: var(--success-color) !important; }
 .badge-outofstock { background-color: var(--danger-color) !important; }
 .badge-lowstock { background-color: var(--warning-color) !important; color: var(--dark-color); }
+
+/* Mobile Responsive - Navbar */
+@media (max-width: 991px) {
+    .navbar-search {
+        width: 100% !important;
+        margin-top: 0.5rem;
+        margin-right: 0 !important;
+    }
+    
+    .navbar-search input,
+    .navbar-search button {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.75rem;
+    }
+    
+    .navbar-nav {
+        margin-top: 1rem;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 1rem;
+    }
+    
+    .dropdown {
+        margin: 0.5rem 0 !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 1rem;
+    }
+    
+    .navbar-brand img {
+        height: 30px;
+    }
+    
+    .version-badge {
+        font-size: 0.6rem;
+        padding: 0.15rem 0.3rem;
+        margin-left: 0.3rem;
+    }
+    
+    .navbar-search {
+        width: 100% !important;
+    }
+    
+    .dropdown {
+        width: 100%;
+    }
+    
+    .btn-outline-primary {
+        width: 100%;
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+}

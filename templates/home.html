@@ -56,8 +56,8 @@
     }
     
     .price-range-values span::before {
-        content: "₹";
-        margin-right: 2px;
+        content: "";
+        margin-right: 0;
     }
     
     .total-value-card {
@@ -75,9 +75,9 @@
     }
     
     .total-value-card h3::before {
-        content: "₹";
+        content: "";
         font-size: 1.8rem;
-        margin-right: 2px;
+        margin-right: 0;
     }
     
     .total-value-card p {
@@ -204,7 +204,7 @@
                             {% endif %}
                             {% if request.args.get('min_price') or request.args.get('max_price') %}
                             <span class="filter-tag">
-                                Price: ₹{{ request.args.get('min_price', '0') }} - ₹{{ request.args.get('max_price', '50000') }}
+                                Price: {{ request.args.get('min_price', '0') }} - {{ request.args.get('max_price', '50000') }}
                                 <span class="close" onclick="removePriceFilter()">&times;</span>
                             </span>
                             {% endif %}
@@ -258,7 +258,7 @@
                         {{ product.description[:80] }}{% if product.description|length > 80 %}...{% endif %}
                     </p>
                     <div class="d-flex justify-content-between align-items-center mt-3">
-                        <span class="price-tag format-price">{{ "%.2f"|format(product.price) }}</span>
+                        <span class="price-tag format-price" data-price-inr="{{ product.price }}" data-original-text="{{ "%.2f"|format(product.price) }}">{{ "%.2f"|format(product.price) }}</span>
                         <span class="badge bg-secondary">
                             <i class="bi bi-box"></i> {{ product.quantity }} units
                         </span>
@@ -434,7 +434,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const text = element.textContent;
         const price = parseFloat(text.replace(/[^0-9.-]+/g, ''));
         if (!isNaN(price)) {
-            element.textContent = '₹' + price.toLocaleString('en-IN');
+            element.textContent = price.toLocaleString('en-IN');
         }
     });
     
@@ -444,7 +444,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const text = totalValue.textContent;
         const value = parseFloat(text.replace(/[^0-9.-]+/g, ''));
         if (!isNaN(value)) {
-            totalValue.textContent = '₹' + value.toLocaleString('en-IN');
+            totalValue.textContent = value.toLocaleString('en-IN');
         }
     }
 });
