@@ -1,7 +1,7 @@
 // main.js - Main JavaScript for IoT Verse
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('IoT Verse - v1.2.7.9 - Developed by MintFire');
+    console.log('IoT Verse - v2.1.1.8 - Developed by MintFire');
     
     // Initialize tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
