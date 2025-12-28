@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![IoT Verse](https://img.shields.io/badge/IoT%20Verse-v1.0-blue?style=for-the-badge)
+![IoT Verse](https://img.shields.io/badge/IoT%20Verse-v2.1.1.8-red?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3.9+-green?style=for-the-badge)
 ![Flask](https://img.shields.io/badge/Flask-2.3.3-lightblue?style=for-the-badge)
 ![AI](https://img.shields.io/badge/AI-Google%20Gemini-orange?style=for-the-badge)
