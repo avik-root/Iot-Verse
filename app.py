@@ -17,6 +17,7 @@ import io
 import base64
 from google import genai
 import os as os_env
+from os import path as os_path
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'iot-verse-secret-key-2024-mintfire'
@@ -177,10 +178,61 @@ def save_volta_config(config):
         json.dump(config, f, indent=4)
 
 def get_volta_api_key():
-    """Get Volta API key from .env file"""
+    """Get Volta API key from .env file or config"""
     from dotenv import load_dotenv
     load_dotenv()
-    return os_env.getenv('GEMINI_API_KEY', '').strip()
+    
+    # First check environment variable
+    env_key = os_env.getenv('GEMINI_API_KEY', '').strip()
+    if env_key:
+        return env_key
+    
+    # Then check if saved in volta config
+    try:
+        config = load_volta_config()
+        if config.get('api_key'):
+            return config['api_key'].strip()
+    except:
+        pass
+    
+    return ''
+
+def save_api_key_to_config(api_key):
+    """Save API key to volta config"""
+    config = load_volta_config()
+    config['api_key'] = api_key.strip()
+    save_volta_config(config)
+    
+    # Also update .env file for persistence
+    try:
+        env_path = '.env'
+        if os_path.exists(env_path):
+            with open(env_path, 'r') as f:
+                lines = f.readlines()
+            
+            updated = False
+            new_lines = []
+            for line in lines:
+                if line.startswith('GEMINI_API_KEY='):
+                    new_lines.append(f'GEMINI_API_KEY={api_key.strip()}\n')
+                    updated = True
+                else:
+                    new_lines.append(line)
+            
+            if not updated:
+                new_lines.append(f'GEMINI_API_KEY={api_key.strip()}\n')
+            
+            with open(env_path, 'w') as f:
+                f.writelines(new_lines)
+        else:
+            with open(env_path, 'w') as f:
+                f.write(f'GEMINI_API_KEY={api_key.strip()}\n')
+    except Exception as e:
+        print(f"Error updating .env file: {e}")
+    
+    # Reload environment
+    from dotenv import load_dotenv
+    load_dotenv()
 
 def process_csv_file(filepath):
     """Convert your specific CSV format to JSON and update price history"""
@@ -920,7 +972,15 @@ def volta_settings():
     if request.method == 'POST':
         action = request.form.get('action')
         
-        if action == 'toggle_status':
+        if action == 'update_api_key':
+            api_key = request.form.get('api_key', '').strip()
+            if api_key:
+                save_api_key_to_config(api_key)
+                flash('✓ API Key saved successfully!', 'success')
+            else:
+                flash('✗ API Key cannot be empty!', 'danger')
+        
+        elif action == 'toggle_status':
             config['enabled'] = not config['enabled']
             save_volta_config(config)
             status = 'enabled' if config['enabled'] else 'disabled'
@@ -929,6 +989,7 @@ def volta_settings():
         elif action == 'reset_config':
             default_config = load_volta_config()
             default_config['enabled'] = False
+            default_config['api_key'] = ''
             save_volta_config(default_config)
             flash('Volta configuration reset. Chatbot is now sleeping.', 'warning')
         

@@ -2,6 +2,139 @@
 
 {% block title %}Volta Settings - Admin{% endblock %}
 
+<style>
+    /* Dark Mode Styles for Volta Settings */
+    body.dark-mode .card {
+        background-color: var(--dark-bg-secondary) !important;
+        border-color: var(--dark-border) !important;
+    }
+    
+    body.dark-mode .card-header {
+        background-color: var(--dark-bg-tertiary) !important;
+        border-color: var(--dark-border) !important;
+        color: var(--dark-text) !important;
+    }
+    
+    body.dark-mode .card-header.bg-primary {
+        background-color: var(--accent-primary) !important;
+        color: white !important;
+    }
+    
+    body.dark-mode .card-header.bg-primary h5 {
+        color: white !important;
+    }
+    
+    body.dark-mode .card-body {
+        color: var(--dark-text) !important;
+    }
+    
+    body.dark-mode .card-title,
+    body.dark-mode h5.card-title,
+    body.dark-mode h6 {
+        color: var(--dark-text) !important;
+    }
+    
+    body.dark-mode .bg-light {
+        background-color: var(--dark-bg-tertiary) !important;
+        color: var(--dark-text) !important;
+        border-color: var(--dark-border) !important;
+    }
+    
+    body.dark-mode pre {
+        color: #7ec699 !important;
+        background-color: var(--dark-bg) !important;
+        border: 1px solid var(--dark-border) !important;
+        white-space: pre-wrap;
+    }
+    
+    body.dark-mode code {
+        color: #f8b500 !important;
+        background-color: rgba(79, 159, 240, 0.1) !important;
+        padding: 2px 6px;
+        border-radius: 4px;
+    }
+    
+    body.dark-mode .alert-info {
+        background-color: rgba(79, 159, 240, 0.1) !important;
+        border-color: var(--accent-primary) !important;
+        color: var(--dark-text) !important;
+    }
+    
+    body.dark-mode .alert-info .alert-heading {
+        color: var(--accent-primary) !important;
+    }
+    
+    body.dark-mode .alert-warning {
+        background-color: rgba(237, 137, 54, 0.1) !important;
+        border-color: var(--accent-warning) !important;
+        color: var(--dark-text) !important;
+    }
+    
+    body.dark-mode .alert-warning .alert-heading {
+        color: var(--accent-warning) !important;
+    }
+    
+    body.dark-mode .alert-danger {
+        background-color: rgba(245, 101, 101, 0.1) !important;
+        border-color: var(--accent-danger) !important;
+        color: var(--dark-text) !important;
+    }
+    
+    body.dark-mode .alert-danger .alert-heading {
+        color: var(--accent-danger) !important;
+    }
+    
+    body.dark-mode .alert a {
+        color: var(--accent-primary) !important;
+        text-decoration: underline;
+    }
+    
+    body.dark-mode .alert a:hover {
+        color: #7ebcde !important;
+    }
+    
+    body.dark-mode .alert-light {
+        background-color: var(--dark-bg-tertiary) !important;
+        border-color: var(--dark-border) !important;
+        color: var(--dark-text) !important;
+    }
+    
+    body.dark-mode .text-muted {
+        color: var(--dark-text-muted) !important;
+    }
+    
+    body.dark-mode .badge {
+        font-weight: 600;
+    }
+    
+    body.dark-mode ol li {
+        color: var(--dark-text) !important;
+    }
+    
+    body.dark-mode ul li {
+        color: var(--dark-text) !important;
+    }
+    
+    body.dark-mode .border-primary {
+        border-color: var(--accent-primary) !important;
+    }
+    
+    body.dark-mode .bg-light.border {
+        background-color: var(--dark-bg-tertiary) !important;
+        border-color: var(--dark-border) !important;
+    }
+    
+    body.dark-mode .list-unstyled li {
+        color: var(--dark-text) !important;
+        margin-bottom: 8px;
+    }
+    
+    body.dark-mode .badge {
+        text-transform: uppercase;
+        font-size: 0.8em;
+    }
+</style>
+
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h2">
@@ -70,25 +203,44 @@
         <div class="row mb-4">
             <div class="col-md-8">
                 <h6 class="mb-3">Google Gemini API Key Configuration</h6>
+                
+                <!-- API Key Input Form -->
+                <form method="POST" action="{{ url_for('volta_settings') }}" class="mb-3" id="apiKeyForm">
+                    <div class="form-group mb-3">
+                        <label for="apiKey" class="form-label"><i class="bi bi-key-fill"></i> Enter API Key</label>
+                        <div class="input-group">
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="apiKey" 
+                                   name="api_key" 
+                                   placeholder="Paste your Google Gemini API key here"
+                                   required>
+                            <button type="button" class="btn btn-outline-secondary" id="toggleApiKey">
+                                <i class="bi bi-eye"></i> Show
+                            </button>
+                        </div>
+                        <small class="form-text text-muted d-block mt-2">
+                            Get your free API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" class="fw-bold">Google AI Studio</a>
+                        </small>
+                    </div>
+                    
+                    <input type="hidden" name="action" value="update_api_key">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Save API Key
+                    </button>
+                </form>
+                
+                <!-- API Key Status -->
                 <div class="alert alert-info">
-                    <h6 class="alert-heading"><i class="bi bi-info-circle"></i> API Key Setup</h6>
-                    <p class="mb-3">The API key is loaded from the <code>.env</code> file environment variable.</p>
-                    <p class="mb-3"><strong>Current Status:</strong>
+                    <h6 class="alert-heading"><i class="bi bi-info-circle"></i> API Key Status</h6>
+                    <p class="mb-2"><strong>Current Status:</strong>
                         {% if api_key_set %}
                         <span class="badge bg-success">✓ API Key Configured</span>
                         {% else %}
                         <span class="badge bg-danger">✗ API Key Not Configured</span>
                         {% endif %}
                     </p>
-                    <h6>To configure the API key:</h6>
-                    <ol class="mb-0">
-                        <li>Create a <code>.env</code> file in the project root (if it doesn't exist)</li>
-                        <li>Add this line to your <code>.env</code> file:
-                            <pre class="bg-light p-2 rounded mt-2 mb-2"><code>GEMINI_API_KEY=your_actual_api_key_here</code></pre>
-                        </li>
-                        <li>Get your free API key from: <a href="https://aistudio.google.com/app/apikey" target="_blank" class="font-weight-bold">aistudio.google.com/app/apikey</a></li>
-                        <li>Restart the Flask application</li>
-                    </ol>
+                    <p class="mb-0"><small>The API key is used to communicate with Google's Gemini AI model. Without it, Volta cannot respond to messages.</small></p>
                 </div>
             </div>
             <div class="col-md-4">
@@ -257,5 +409,84 @@
     font-size: 0.9em;
     padding: 0.5em 0.75em;
 }
+
+#apiKey {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.05em;
+}
+
+.form-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.input-group .btn-outline-secondary {
+    border-color: #dee2e6;
+}
+
+.input-group .btn-outline-secondary:hover {
+    background-color: transparent;
+}
+
+body.dark-mode #apiKey {
+    background-color: var(--dark-bg-tertiary) !important;
+    color: var(--dark-text) !important;
+    border-color: var(--dark-border) !important;
+}
+
+body.dark-mode #apiKey::placeholder {
+    color: var(--dark-text-muted) !important;
+}
+
+body.dark-mode #apiKey:focus {
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(79, 159, 240, 0.25) !important;
+}
+
+body.dark-mode .form-label {
+    color: var(--dark-text) !important;
+}
+
+body.dark-mode .input-group .btn-outline-secondary {
+    border-color: var(--dark-border) !important;
+    color: var(--dark-text) !important;
+}
+
+body.dark-mode .input-group .btn-outline-secondary:hover {
+    background-color: rgba(79, 159, 240, 0.1) !important;
+    border-color: var(--accent-primary) !important;
+    color: var(--accent-primary) !important;
+}
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle API Key visibility
+    const toggleBtn = document.getElementById('toggleApiKey');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const apiKeyField = document.getElementById('apiKey');
+            const btn = this;
+            
+            if (apiKeyField.type === 'password') {
+                apiKeyField.type = 'text';
+                btn.innerHTML = '<i class="bi bi-eye-slash"></i> Hide';
+            } else {
+                apiKeyField.type = 'password';
+                btn.innerHTML = '<i class="bi bi-eye"></i> Show';
+            }
+        });
+    }
+    
+    // Prevent form disappearance on submission
+    const apiKeyForm = document.getElementById('apiKeyForm');
+    if (apiKeyForm) {
+        apiKeyForm.addEventListener('submit', function(e) {
+            // Form will submit normally and page will reload with status
+            // This prevents any JavaScript from hiding the form
+        });
+    }
+});
+</script>
 {% endblock %}
