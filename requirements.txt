@@ -6,3 +6,4 @@ matplotlib
 python-dotenv
 Pillow
 google-genai
+gunicorn
