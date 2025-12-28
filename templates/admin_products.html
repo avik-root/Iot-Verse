@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Products - IoT Verse{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">
+        <i class="bi bi-box-seam"></i> Manage Products
+    </h1>
+    <div>
+        <a href="{{ url_for('volta_settings') }}" class="btn btn-warning me-2">
+            <i class="bi bi-robot"></i> Volta Settings
+        </a>
+        <a href="{{ url_for('add_product') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add New Product
+        </a>
+    </div>
+</div>
+
+<!-- Drag & Drop Info -->
+<div class="alert alert-info alert-dismissible fade show" role="alert">
+    <i class="bi bi-info-circle"></i> <strong>Tip:</strong> Click and drag product rows to reorder. The changes are automatically saved to the database.
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+
+<!-- Products Table -->
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover" id="productsTable">
+                <thead>
+                    <tr>
+                        <th style="width: 30px;"><i class="bi bi-arrows-move"></i></th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                        <th>Value</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="productsList" style="cursor: move;">
+                    {% for product in products|sort(attribute='index') %}
+                    <tr class="product-row" data-product-id="{{ product.id }}" draggable="true">
+                        <td class="drag-handle text-center">
+                            <i class="bi bi-grip-vertical"></i>
+                        </td>
+                        <td>
+                            <img src="{{ url_for('uploaded_file', filename=product.image) if product.image != 'default.jpg' else url_for('static', filename='images/default-device.gif') }}" 
+                                 alt="{{ product.name }}" class="rounded" width="50" height="50">
+                        </td>
+                        <td>
+                            <strong>{{ product.name }}</strong><br>
+                            <small class="text-muted">{{ product.description[:50] }}...</small>
+                        </td>
+                        <td class="price-tag">₹{{ "%.2f"|format(product.price) }}</td>
+                        <td>
+                            <span class="badge bg-{{ 'success' if product.quantity > 10 else 'warning' if product.quantity > 0 else 'danger' }}">
+                                {{ product.quantity }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge 
+                                {% if product.availability == 'In Stock' %}bg-success
+                                {% elif product.availability == 'Low Stock' %}bg-warning text-dark
+                                {% else %}bg-danger{% endif %}">
+                                {{ product.availability }}
+                            </span>
+                        </td>
+                        <td>${{ "%.2f"|format(product.price * product.quantity) }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ url_for('product_detail', product_id=product.id) }}" 
+                                   class="btn btn-outline-info" title="View">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{{ url_for('edit_product', product_id=product.id) }}" 
+                                   class="btn btn-outline-warning" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form method="POST" action="{{ url_for('delete_product', product_id=product.id) }}" 
+                                      class="d-inline" onsubmit="return confirm('Delete this product?');">
+                                    <button type="submit" class="btn btn-outline-danger" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% if not products %}
+        <div class="text-center py-5">
+            <i class="bi bi-box display-1 text-muted"></i>
+            <h3 class="mt-3">No Products Found</h3>
+            <p class="text-muted">Add your first IoT device or upload a CSV file</p>
+            <div class="mt-3">
+                <a href="{{ url_for('add_product') }}" class="btn btn-primary me-2">
+                    <i class="bi bi-plus-circle"></i> Add Product
+                </a>
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" 
+                        data-bs-target="#uploadCSVModal">
+                    <i class="bi bi-upload"></i> Upload CSV
+                </button>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Bulk Actions -->
+<div class="card mt-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0">Bulk Operations</h5>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <button type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal" 
+                        data-bs-target="#uploadCSVModal">
+                    <i class="bi bi-upload"></i> Bulk Upload via CSV
+                </button>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ url_for('api_products') }}" class="btn btn-outline-info w-100" target="_blank">
+                    <i class="bi bi-download"></i> Export as JSON
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ url_for('volta_settings') }}" class="btn btn-outline-warning w-100">
+                    <i class="bi bi-robot"></i> Volta Control
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-speedometer2"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSV Upload Modal (same as dashboard) -->
+<div class="modal fade" id="uploadCSVModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Upload CSV File</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('upload_csv') }}" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Select CSV File</label>
+                        <input type="file" class="form-control" name="csv_file" accept=".csv" required>
+                        <div class="form-text">
+                            CSV format: name,price,quantity,availability,description
+                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        <h6><i class="bi bi-info-circle"></i> CSV Processing:</h6>
+                        <ul class="mb-0">
+                            <li>Updates existing products by name</li>
+                            <li>Creates new products</li>
+                            <li>Tracks price changes automatically</li>
+                            <li>Converts CSV to JSON database</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-upload"></i> Upload & Process
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.product-row.dragging {
+    opacity: 0.5;
+    background-color: #e3f2fd;
+}
+
+.product-row.drag-over {
+    background-color: #c8e6c9;
+    border-top: 3px solid #4caf50;
+}
+
+.drag-handle {
+    cursor: grab;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+</style>
+
+<script>
+let draggedElement = null;
+let draggedOverElement = null;
+
+const productsList = document.getElementById('productsList');
+const productRows = document.querySelectorAll('.product-row');
+
+// Add drag event listeners to each product row
+productRows.forEach(row => {
+    row.addEventListener('dragstart', handleDragStart);
+    row.addEventListener('dragend', handleDragEnd);
+    row.addEventListener('dragover', handleDragOver);
+    row.addEventListener('drop', handleDrop);
+    row.addEventListener('dragenter', handleDragEnter);
+    row.addEventListener('dragleave', handleDragLeave);
+});
+
+function handleDragStart(e) {
+    draggedElement = this;
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', this.innerHTML);
+}
+
+function handleDragEnd(e) {
+    this.classList.remove('dragging');
+    productRows.forEach(row => {
+        row.classList.remove('drag-over');
+    });
+}
+
+function handleDragOver(e) {
+    if (e.preventDefault) {
+        e.preventDefault();
+    }
+    e.dataTransfer.dropEffect = 'move';
+    return false;
+}
+
+function handleDragEnter(e) {
+    if (this !== draggedElement) {
+        this.classList.add('drag-over');
+    }
+}
+
+function handleDragLeave(e) {
+    if (e.target === this) {
+        this.classList.remove('drag-over');
+    }
+}
+
+function handleDrop(e) {
+    if (e.stopPropagation) {
+        e.stopPropagation();
+    }
+
+    if (draggedElement !== this) {
+        // Swap rows
+        const allRows = Array.from(productsList.querySelectorAll('.product-row'));
+        const draggedIndex = allRows.indexOf(draggedElement);
+        const targetIndex = allRows.indexOf(this);
+
+        if (draggedIndex < targetIndex) {
+            this.parentNode.insertBefore(draggedElement, this.nextSibling);
+        } else {
+            this.parentNode.insertBefore(draggedElement, this);
+        }
+
+        // Save the new order to database
+        saveProductOrder();
+    }
+
+    return false;
+}
+
+function saveProductOrder() {
+    const productOrder = Array.from(document.querySelectorAll('.product-row'))
+        .map(row => row.getAttribute('data-product-id'));
+
+    fetch('/api/products/reorder', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ order: productOrder })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Product order saved successfully');
+            // Show a brief success message
+            showNotification('Products reordered successfully!', 'success');
+        } else {
+            console.error('Error saving order:', data.error);
+            showNotification('Error saving product order', 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Error saving product order', 'danger');
+    });
+}
+
+function showNotification(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.role = 'alert';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    const container = document.querySelector('main') || document.body;
+    container.insertBefore(alertDiv, container.firstChild);
+    
+    // Auto-dismiss after 3 seconds
+    setTimeout(() => {
+        const bsAlert = new bootstrap.Alert(alertDiv);
+        bsAlert.close();
+    }, 3000);
+}
+</script>
+{% endblock %}

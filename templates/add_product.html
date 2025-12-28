@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edit' if product else 'Add' }} Product - IoT Verse{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    <i class="bi bi-{{ 'pencil' if product else 'plus' }}-circle"></i>
+                    {{ 'Edit' if product else 'Add New' }} IoT Device
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data" 
+                      action="{{ url_for('edit_product', product_id=product.id) if product else url_for('add_product') }}">
+                    
+                    <div class="row g-3">
+                        <!-- Product Name -->
+                        <div class="col-md-6">
+                            <label for="name" class="form-label">Device Name *</label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   value="{{ product.name if product else '' }}" required>
+                        </div>
+                        
+                        <!-- Price -->
+                        <div class="col-md-6">
+                            <label for="price" class="form-label">Price (₹) *</label>
+                            <input type="number" step="0.01" min="0" class="form-control" id="price" 
+                                   name="price" value="{{ product.price if product else '0' }}" required>
+                        </div>
+                        
+                        <!-- Quantity -->
+                        <div class="col-md-6">
+                            <label for="quantity" class="form-label">Quantity Available *</label>
+                            <input type="number" min="0" class="form-control" id="quantity" 
+                                   name="quantity" value="{{ product.quantity if product else '0' }}" required>
+                        </div>
+                        
+                        <!-- Device Type -->
+                        <div class="col-md-6">
+                            <label for="type" class="form-label">Device Type *</label>
+                            <input type="text" class="form-control" id="type" name="type" 
+                                   placeholder="e.g., Microcontroller, Sensor, PC" 
+                                   value="{{ product.type if product else '' }}" required>
+                            <div class="form-text">Enter the type of IoT device (e.g., Microcontroller, Sensor, PC, Router, Gateway)</div>
+                        </div>
+                        
+                        <!-- Availability -->
+                        <div class="col-md-6">
+                            <label for="availability" class="form-label">Availability *</label>
+                            <select class="form-select" id="availability" name="availability" required>
+                                <option value="In Stock" {% if product and product.availability == 'In Stock' %}selected{% endif %}>
+                                    In Stock
+                                </option>
+                                <option value="Low Stock" {% if product and product.availability == 'Low Stock' %}selected{% endif %}>
+                                    Low Stock
+                                </option>
+                                <option value="Out of Stock" {% if product and product.availability == 'Out of Stock' %}selected{% endif %}>
+                                    Out of Stock
+                                </option>
+                            </select>
+                        </div>
+                        
+                        <!-- Description -->
+                        <div class="col-12">
+                            <label for="description" class="form-label">Description *</label>
+                            <textarea class="form-control" id="description" name="description" 
+                                      rows="4" required>{{ product.description if product else '' }}</textarea>
+                        </div>
+                        
+                        <!-- Image Upload -->
+                        <div class="col-12">
+                            <label for="image" class="form-label">Product Image</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                            <div class="form-text">
+                                Upload a clear image of the device (PNG, JPG, JPEG, GIF)
+                            </div>
+                            
+                            {% if product and product.image != 'default.jpg' %}
+                            <div class="mt-2">
+                                <p class="mb-1">Current Image:</p>
+                                <img src="{{ url_for('uploaded_file', filename=product.image) }}" 
+                                     alt="Current image" class="img-thumbnail" width="150">
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Form Actions -->
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ url_for('admin_products') }}" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-{{ 'check' if product else 'plus' }}-circle"></i>
+                                    {{ 'Update' if product else 'Add' }} Product
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Help Section -->
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6><i class="bi bi-info-circle"></i> Product Management Tips:</h6>
+                <ul class="mb-0">
+                    <li>Price changes are automatically tracked in price history</li>
+                    <li>Images are stored in uploads/product_images/</li>
+                    <li>Use CSV upload for bulk operations</li>
+                    <li>All data is stored in JSON format for easy backup</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

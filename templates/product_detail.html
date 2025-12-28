@@ -1,0 +1,346 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - IoT Verse{% endblock %}
+
+{% block extra_css %}
+<style>
+    .price-chart-container {
+        height: 300px;
+        position: relative;
+    }
+    
+    .inr-price {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: 700;
+    }
+    
+    .inr-price::before {
+        content: "₹";
+        font-weight: 600;
+        margin-right: 2px;
+    }
+    
+    .price-change {
+        font-size: 0.9rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        display: inline-block;
+    }
+    
+    .price-up {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+    }
+    
+    .price-down {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+    
+    .price-same {
+        background-color: rgba(100, 116, 139, 0.1);
+        color: #64748b;
+    }
+    
+    .currency-note {
+        font-size: 0.85rem;
+        color: #64748b;
+        font-style: italic;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Currency Note -->
+<div class="alert alert-info">
+    <i class="bi bi-currency-rupee"></i> All prices are displayed in Indian Rupees (INR)
+</div>
+
+<div class="row">
+    <!-- Product Image -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body text-center">
+                <img src="{{ url_for('uploaded_file', filename=product.image) if product.image != 'default.jpg' else url_for('static', filename='images/default-device.gif') }}" 
+                     class="img-fluid rounded" 
+                     alt="{{ product.name }}" 
+                     style="max-height: 400px;"
+                     onerror="this.src='{{ url_for('static', filename='images/default-device.gif') }}'">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Product Details -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h1 class="card-title">{{ product.name }}</h1>
+                    <span class="badge {% if product.availability == 'In Stock' %}badge-instock
+                        {% elif product.availability == 'Out of Stock' %}badge-outofstock
+                        {% else %}bg-secondary{% endif %} p-2">
+                        {{ product.availability }}
+                    </span>
+                </div>
+                
+                {% if product.type %}
+                <div class="mb-2">
+                    <span class="badge bg-light text-dark">{{ product.type }}</span>
+                </div>
+                {% endif %}
+                
+                <div class="mb-4">
+                    <h2 class="inr-price">{{ "{:,.2f}".format(product.price) }}</h2>
+                    <p class="text-muted">Current Price</p>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ product.quantity }}</h5>
+                                <p class="card-text text-muted">Quantity Available</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <h5 class="card-title inr-price">{{ "{:,.2f}".format(product.price * product.quantity) }}</h5>
+                                <p class="card-text text-muted">Total Value</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if average_price %}
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card bg-primary bg-opacity-10">
+                            <div class="card-body text-center">
+                                <h5 class="card-title inr-price" style="color: #0d6efd;">{{ "{:,.2f}".format(average_price) }}</h5>
+                                <p class="card-text text-muted">Average Price (History)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="mb-4">
+                    <h5>Description</h5>
+                    <p class="card-text">{{ product.description }}</p>
+                </div>
+                
+                <div class="mb-3">
+                    <small class="text-muted">
+                        <i class="bi bi-calendar"></i> Last Updated: {{ product.last_updated[:10] }}
+                    </small>
+                </div>
+                
+                {% if current_user.is_authenticated %}
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="{{ url_for('edit_product', product_id=product.id) }}" 
+                       class="btn btn-warning">
+                        <i class="bi bi-pencil"></i> Edit Product
+                    </a>
+                </div>
+                {% endif %}
+                
+                <!-- Ask Volta Button -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#voltaChatModal">
+                        <i class="bi bi-robot"></i> Ask Volta About This Device
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Price History Graph -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-graph-up"></i> Price History (INR)
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if price_graph %}
+                <div class="text-center">
+                    <img src="{{ price_graph }}" alt="Price History Graph" class="img-fluid">
+                    <p class="currency-note mt-2">Price history shown in Indian Rupees (₹)</p>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-bar-chart display-1 text-muted"></i>
+                    <p class="text-muted mt-3">No price history available for this product</p>
+                    <p class="currency-note">Price tracking will begin when price changes occur</p>
+                </div>
+                {% endif %}
+                
+                {% if price_history %}
+                <div class="table-responsive mt-4">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Price (INR)</th>
+                                <th>Price Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set previous_price = product.price %}
+                            {% for history in price_history|reverse %}
+                            <tr>
+                                <td>{{ history.date[:10] }}</td>
+                                <td class="inr-price">{{ "{:,.2f}".format(history.price) }}</td>
+                                <td>
+                                    {% if loop.first %}
+                                    <span class="badge bg-secondary">Current</span>
+                                    {% else %}
+                                    {% set change = previous_price - history.price %}
+                                    <span class="price-change {% if change > 0 %}price-up{% elif change < 0 %}price-down{% else %}price-same{% endif %}">
+                                        {% if change > 0 %}▲{% elif change < 0 %}▼{% endif %}
+                                        ₹{{ "%.2f"|format(change|abs) }}
+                                    </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% set previous_price = history.price %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Back Button -->
+<div class="row mt-4">
+    <div class="col-12">
+        <a href="{{ url_for('home') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Products
+        </a>
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('edit_product', product_id=product.id) }}" class="btn btn-outline-warning ms-2">
+            <i class="bi bi-pencil"></i> Edit
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Volta Chat Modal -->
+<div class="modal fade" id="voltaChatModal" tabindex="-1" aria-labelledby="voltaChatLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="voltaChatLabel">
+                    <i class="bi bi-robot"></i> Volta - Ask About {{ product.name }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="voltaChatContainer" style="height: 400px; overflow-y: auto; background: #f8f9fa; border-radius: 8px; padding: 15px;">
+                    <div id="chatMessages" style="display: flex; flex-direction: column; gap: 10px;">
+                        <div class="alert alert-info" role="alert">
+                            <strong>Welcome!</strong> I'm Volta, your IoT assistant. Ask me anything about <strong>{{ product.name }}</strong>.
+                            <br><small>I specialize in IoT, AI/ML, Cyber Security, and CSE topics.</small>
+                        </div>
+                    </div>
+                    <div id="voltaTyping" style="display: none; text-align: center; padding: 10px;">
+                        <span class="spinner-border spinner-border-sm text-info me-2"></span>
+                        <small class="text-muted">Volta is thinking...</small>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="voltaInput" placeholder="Ask Volta..." 
+                               onkeypress="if(event.key==='Enter') sendVoltaMessage()">
+                        <button class="btn btn-info" type="button" onclick="sendVoltaMessage()">
+                            <i class="bi bi-send"></i> Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function sendVoltaMessage() {
+    const input = document.getElementById('voltaInput');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    // Add user message to chat
+    const chatMessages = document.getElementById('chatMessages');
+    const userMessageDiv = document.createElement('div');
+    userMessageDiv.className = 'alert alert-primary text-end mb-0';
+    userMessageDiv.textContent = message;
+    chatMessages.appendChild(userMessageDiv);
+    
+    input.value = '';
+    
+    // Show typing indicator
+    document.getElementById('voltaTyping').style.display = 'block';
+    
+    // Scroll to bottom
+    const container = document.getElementById('voltaChatContainer');
+    setTimeout(() => container.scrollTop = container.scrollHeight, 50);
+    
+    // Send to API
+    fetch('{{ url_for("api_chat") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            message: `[About {{ product.name }}] ${message}`
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => Promise.reject(data));
+        }
+        return response.json();
+    })
+    .then(data => {
+        document.getElementById('voltaTyping').style.display = 'none';
+        
+        if (data.success && data.response) {
+            const responseDiv = document.createElement('div');
+            responseDiv.className = 'alert alert-light mb-0 border-start border-info';
+            responseDiv.innerHTML = `<strong>Volta:</strong> ${data.response}`;
+            chatMessages.appendChild(responseDiv);
+        } else if (data.response && !data.success) {
+            const responseDiv = document.createElement('div');
+            responseDiv.className = 'alert alert-light mb-0 border-start border-info';
+            responseDiv.innerHTML = `<strong>Volta:</strong> ${data.response}`;
+            chatMessages.appendChild(responseDiv);
+        } else if (data.error) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'alert alert-danger mb-0';
+            errorDiv.innerHTML = `<strong>Error:</strong> ${data.error}`;
+            chatMessages.appendChild(errorDiv);
+        }
+        
+        setTimeout(() => container.scrollTop = container.scrollHeight, 50);
+    })
+    .catch(error => {
+        document.getElementById('voltaTyping').style.display = 'none';
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'alert alert-danger mb-0';
+        const errorMsg = error.error || error.message || 'Unknown error occurred';
+        errorDiv.innerHTML = `<strong>Error:</strong> ${errorMsg}`;
+        chatMessages.appendChild(errorDiv);
+        
+        setTimeout(() => container.scrollTop = container.scrollHeight, 50);
+    });
+}
+</script>
+{% endblock %}

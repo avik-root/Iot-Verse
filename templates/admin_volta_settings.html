@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% block title %}Volta Settings - Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">
+        <i class="bi bi-robot"></i> Volta Chatbot Control Panel
+    </h1>
+    <a href="{{ url_for('admin_products') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Products
+    </a>
+</div>
+
+<!-- Status Badge -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card border-0">
+            <div class="card-body text-center">
+                {% if config.enabled %}
+                <i class="bi bi-check-circle display-1 text-success mb-3"></i>
+                <h5 class="card-title">Volta is Awake</h5>
+                <p class="text-muted">Chatbot is active and responding</p>
+                <span class="badge bg-success">ENABLED</span>
+                {% else %}
+                <i class="bi bi-moon display-1 text-warning mb-3"></i>
+                <h5 class="card-title">Volta is Sleeping</h5>
+                <p class="text-muted">Chatbot is in maintenance mode</p>
+                <span class="badge bg-warning">DISABLED</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0">
+            <div class="card-body text-center">
+                {% if api_key_set %}
+                <i class="bi bi-key-fill display-1 text-info mb-3"></i>
+                <h5 class="card-title">API Key Set</h5>
+                <p class="text-muted">Google Gemini API configured</p>
+                <span class="badge bg-info">CONFIGURED</span>
+                {% else %}
+                <i class="bi bi-exclamation-circle display-1 text-danger mb-3"></i>
+                <h5 class="card-title">No API Key</h5>
+                <p class="text-muted">Volta cannot function without it</p>
+                <span class="badge bg-danger">NOT SET</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 bg-light">
+            <div class="card-body text-center">
+                <i class="bi bi-file-text display-1 text-secondary mb-3"></i>
+                <h5 class="card-title">API Key Source</h5>
+                <p class="text-muted">Stored in .env file</p>
+                <span class="badge bg-secondary">ENVIRONMENT</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Settings Card -->
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-sliders"></i> Chatbot Settings</h5>
+    </div>
+    <div class="card-body">
+        <!-- API Key Management -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h6 class="mb-3">Google Gemini API Key Configuration</h6>
+                <div class="alert alert-info">
+                    <h6 class="alert-heading"><i class="bi bi-info-circle"></i> API Key Setup</h6>
+                    <p class="mb-3">The API key is loaded from the <code>.env</code> file environment variable.</p>
+                    <p class="mb-3"><strong>Current Status:</strong>
+                        {% if api_key_set %}
+                        <span class="badge bg-success">✓ API Key Configured</span>
+                        {% else %}
+                        <span class="badge bg-danger">✗ API Key Not Configured</span>
+                        {% endif %}
+                    </p>
+                    <h6>To configure the API key:</h6>
+                    <ol class="mb-0">
+                        <li>Create a <code>.env</code> file in the project root (if it doesn't exist)</li>
+                        <li>Add this line to your <code>.env</code> file:
+                            <pre class="bg-light p-2 rounded mt-2 mb-2"><code>GEMINI_API_KEY=your_actual_api_key_here</code></pre>
+                        </li>
+                        <li>Get your free API key from: <a href="https://aistudio.google.com/app/apikey" target="_blank" class="font-weight-bold">aistudio.google.com/app/apikey</a></li>
+                        <li>Restart the Flask application</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="alert alert-warning mb-0">
+                    <h6 class="alert-heading"><i class="bi bi-exclamation-triangle"></i> Important</h6>
+                    <ul class="mb-0">
+                        <li>Never commit .env file to git</li>
+                        <li>Keep API key private and secure</li>
+                        <li>Use environment variables for production</li>
+                        <li>Free tier available at Google</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- Enable/Disable Volta -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h6 class="mb-3">Volta Status Control</h6>
+                <p class="text-muted mb-3">
+                    {% if config.enabled %}
+                    Volta is currently <strong>ACTIVE</strong>. Users can chat with the bot.
+                    {% else %}
+                    Volta is currently <strong>SLEEPING (Maintenance Mode)</strong>. Users will see a maintenance message.
+                    {% endif %}
+                </p>
+                <form method="POST" action="{{ url_for('volta_settings') }}" class="d-inline">
+                    <input type="hidden" name="action" value="toggle_status">
+                    {% if config.enabled %}
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-moon"></i> Put Volta to Sleep
+                    </button>
+                    {% else %}
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Wake Up Volta
+                    </button>
+                    {% endif %}
+                </form>
+            </div>
+            <div class="col-md-4">
+                <div class="alert alert-warning mb-0">
+                    <h6 class="alert-heading">Maintenance Mode</h6>
+                    <ul class="mb-0">
+                        <li>Use to disable chatbot temporarily</li>
+                        <li>Users see "Volta is sleeping" message</li>
+                        <li>No data is lost</li>
+                        <li>Easy to re-enable anytime</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- Reset Configuration -->
+        <div class="row">
+            <div class="col-md-8">
+                <h6 class="mb-3">Reset Configuration</h6>
+                <p class="text-muted mb-3">
+                    Clear all Volta settings and restore defaults. The API key must be reconfigured in the .env file.
+                </p>
+                <form method="POST" action="{{ url_for('volta_settings') }}" 
+                      onsubmit="return confirm('Are you sure? This will reset all Volta settings.');">
+                    <input type="hidden" name="action" value="reset_config">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-arrow-clockwise"></i> Reset Configuration
+                    </button>
+                </form>
+            </div>
+            <div class="col-md-4">
+                <div class="alert alert-danger mb-0">
+                    <h6 class="alert-heading">Warning</h6>
+                    <ul class="mb-0">
+                        <li>This action cannot be undone</li>
+                        <li>Volta will be disabled</li>
+                        <li>All settings will be reset</li>
+                        <li>Confirm carefully</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Prompt Card -->
+<div class="card mt-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-chat-left-text"></i> Volta System Prompt</h5>
+    </div>
+    <div class="card-body">
+        <p class="text-muted mb-3">This is the system instruction that guides Volta's responses:</p>
+        <div class="alert alert-light border" style="max-height: 300px; overflow-y: auto;">
+            <pre style="margin: 0; white-space: pre-wrap;">{{ config.system_prompt }}</pre>
+        </div>
+        <small class="text-muted">
+            <i class="bi bi-info-circle"></i> The system prompt ensures Volta only responds to IoT, AI/ML, Cyber Security, and CSE topics.
+        </small>
+    </div>
+</div>
+
+<!-- Usage Statistics -->
+<div class="card mt-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-graph-up"></i> Chatbot Information</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h6>Specializations</h6>
+                <ul class="list-unstyled">
+                    <li><span class="badge bg-primary">IoT</span> Internet of Things & Smart Devices</li>
+                    <li><span class="badge bg-success">AI/ML</span> Artificial Intelligence & Machine Learning</li>
+                    <li><span class="badge bg-warning">Security</span> Cyber Security & Protection</li>
+                    <li><span class="badge bg-info">CSE</span> Computer Science Engineering</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h6>Model Information</h6>
+                <ul class="list-unstyled">
+                    <li><strong>Model:</strong> Google Gemini 2.5 Flash</li>
+                    <li><strong>Type:</strong> AI Language Model</li>
+                    <li><strong>Response Time:</strong> ~2-5 seconds</li>
+                    <li><strong>Availability:</strong> Public API</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Start Guide -->
+<div class="card mt-4 bg-light border-primary">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-lightbulb"></i> Quick Start Guide</h5>
+    </div>
+    <div class="card-body">
+        <ol>
+            <li><strong>Get API Key:</strong> Visit <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a> and create a free API key</li>
+            <li><strong>Create .env file:</strong> Create a <code>.env</code> file in the project root if it doesn't exist</li>
+            <li><strong>Add API Key:</strong> Add <code>GEMINI_API_KEY=your_key_here</code> to the <code>.env</code> file</li>
+            <li><strong>Restart Server:</strong> Restart the Flask application to load the new environment variable</li>
+            <li><strong>Test:</strong> Visit <a href="{{ url_for('chat') }}">/chat</a> and start talking to Volta</li>
+            <li><strong>Manage:</strong> Use the toggle below to enable/disable Volta anytime</li>
+        </ol>
+    </div>
+</div>
+
+
+<style>
+.card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s;
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.card-header {
+    border-radius: 12px 12px 0 0;
+}
+
+.badge {
+    font-size: 0.9em;
+    padding: 0.5em 0.75em;
+}
+</style>
+{% endblock %}

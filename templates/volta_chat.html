@@ -1,0 +1,431 @@
+{% extends "base.html" %}
+
+{% block title %}Volta AI Assistant - IoT Verse{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row h-100" style="min-height: calc(100vh - 200px);">
+        <!-- Sidebar Info -->
+        <div class="col-lg-3 border-end d-none d-lg-block" style="background-color: #f8f9fa;">
+            <div class="p-4">
+                <div class="card border-0 bg-light">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-robot"></i> Volta AI Assistant
+                        </h5>
+                        <p class="card-text text-muted mb-3">
+                            Your intelligent IoT companion, powered by Google Gemini
+                        </p>
+                        
+                        <hr>
+                        
+                        <h6 class="card-subtitle mb-3">Specializations:</h6>
+                        <div class="list-group list-group-flush">
+                            <a href="#" class="list-group-item list-group-item-action border-0 px-0">
+                                <span class="badge bg-primary me-2">IoT</span>
+                                Internet of Things
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action border-0 px-0">
+                                <span class="badge bg-success me-2">AI/ML</span>
+                                Artificial Intelligence
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action border-0 px-0">
+                                <span class="badge bg-warning me-2">Cyber</span>
+                                Cyber Security
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action border-0 px-0">
+                                <span class="badge bg-info me-2">CSE</span>
+                                Computer Science
+                            </a>
+                        </div>
+
+                        <hr>
+
+                        <h6 class="card-subtitle mb-3">Quick Questions:</h6>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-primary btn-sm quick-question" 
+                                    data-question="What are the main applications of IoT in smart cities?">
+                                <small>IoT in Smart Cities</small>
+                            </button>
+                            <button class="btn btn-outline-success btn-sm quick-question"
+                                    data-question="Explain the difference between supervised and unsupervised machine learning.">
+                                <small>ML Types Explained</small>
+                            </button>
+                            <button class="btn btn-outline-warning btn-sm quick-question"
+                                    data-question="What are the main cybersecurity threats in IoT devices?">
+                                <small>IoT Security Threats</small>
+                            </button>
+                            <button class="btn btn-outline-info btn-sm quick-question"
+                                    data-question="Explain the OSI model and its layers.">
+                                <small>OSI Model Overview</small>
+                            </button>
+                        </div>
+
+                        <hr>
+
+                        <p class="small text-muted mb-0">
+                            <i class="bi bi-info-circle"></i> Volta responds to questions about IoT, AI/ML, Cyber Security, and CSE topics only.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="col-lg-9">
+            <div class="d-flex flex-column h-100">
+                <!-- Header -->
+                <div class="border-bottom p-3 bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">
+                                <i class="bi bi-robot text-primary"></i> Volta - IoT AI Assistant
+                            </h4>
+                            <small class="text-muted">Powered by Google Gemini • Always Ready to Help</small>
+                        </div>
+                        <a href="{{ url_for('admin_products') }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-box"></i> Back to Products
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="flex-grow-1 p-3 overflow-auto" id="chatMessages" style="background-color: #f8f9fa;">
+                    {% if chatbot_enabled %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-robot display-1 text-primary mb-3"></i>
+                        <h5>Welcome to Volta AI Assistant</h5>
+                        <p class="text-muted mb-0">
+                            Ask me anything about IoT, Artificial Intelligence, Machine Learning, Cyber Security, or Computer Science Engineering!
+                        </p>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-moon display-1 text-warning mb-3"></i>
+                        <h5>Volta is Sleeping 😴</h5>
+                        <p class="text-muted mb-3">
+                            The chatbot is currently in maintenance mode.
+                        </p>
+                        <p class="text-muted small">
+                            <i class="bi bi-info-circle"></i> Please contact the administrator to enable Volta.
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Input Area -->
+                <div class="border-top p-3 bg-white">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="messageInput" 
+                               placeholder="Ask me about IoT, AI/ML, Cyber Security, or CSE..."
+                               aria-label="Ask a question"
+                               {% if not chatbot_enabled %}disabled{% endif %}>
+                        <button class="btn btn-primary" type="button" id="sendBtn" 
+                                {% if not chatbot_enabled %}disabled{% endif %}>
+                            <i class="bi bi-send"></i> Send
+                        </button>
+                    </div>
+                    <small class="form-text text-muted mt-2">
+                        {% if chatbot_enabled %}
+                        Press Enter to send or click the Send button
+                        {% else %}
+                        Volta is sleeping. Check back soon! 😴
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+body {
+    background-color: #f8f9fa;
+}
+
+#chatMessages {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chat-message {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chat-message.user {
+    justify-content: flex-end;
+}
+
+.chat-message.bot {
+    justify-content: flex-start;
+}
+
+.message-bubble {
+    max-width: 75%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+
+.user .message-bubble {
+    background-color: #2563eb;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.bot .message-bubble {
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-bottom-left-radius: 4px;
+    color: #1f2937;
+}
+
+.message-time {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 4px;
+    padding: 0 4px;
+}
+
+.typing-indicator {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    width: fit-content;
+}
+
+.typing-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #9ca3af;
+    animation: typing 1.4s infinite;
+}
+
+.typing-dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 60%, 100% {
+        opacity: 0.3;
+        transform: translateY(0);
+    }
+    30% {
+        opacity: 1;
+        transform: translateY(-10px);
+    }
+}
+
+#messageInput:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+}
+
+.btn-primary {
+    background-color: #2563eb;
+    border-color: #2563eb;
+}
+
+.btn-primary:hover {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+}
+
+code {
+    background-color: #f3f4f6;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #dc2626;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+pre {
+    background-color: #1f2937;
+    color: #f3f4f6;
+    padding: 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.85em;
+}
+
+pre code {
+    color: #f3f4f6;
+    background-color: transparent;
+    padding: 0;
+}
+
+.quick-question {
+    text-align: left;
+    white-space: normal;
+}
+
+.quick-question:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+</style>
+
+<script>
+const messageInput = document.getElementById('messageInput');
+const sendBtn = document.getElementById('sendBtn');
+const chatMessages = document.getElementById('chatMessages');
+const quickQuestions = document.querySelectorAll('.quick-question');
+
+// Clear initial welcome message when first message is sent
+let isFirstMessage = true;
+
+sendBtn.addEventListener('click', sendMessage);
+messageInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        sendMessage();
+    }
+});
+
+quickQuestions.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        messageInput.value = btn.getAttribute('data-question');
+        messageInput.focus();
+    });
+});
+
+function sendMessage() {
+    const message = messageInput.value.trim();
+    if (!message) return;
+
+    // Clear input
+    messageInput.value = '';
+    
+    // Clear welcome message on first message
+    if (isFirstMessage) {
+        chatMessages.innerHTML = '';
+        isFirstMessage = false;
+    }
+
+    // Add user message to chat
+    addMessage(message, 'user');
+
+    // Show typing indicator
+    showTypingIndicator();
+
+    // Send message to backend
+    fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: message })
+    })
+    .then(response => response.json())
+    .then(data => {
+        removeTypingIndicator();
+        
+        if (data.success) {
+            addMessage(data.response, 'bot');
+        } else {
+            // Check if it's a maintenance message
+            let errorMessage = data.error || 'Unable to process request';
+            if (data.status === 'maintenance') {
+                addMessage('🌙 ' + errorMessage, 'bot', true);
+            } else {
+                addMessage('Error: ' + errorMessage, 'bot', true);
+            }
+        }
+    })
+    .catch(error => {
+        removeTypingIndicator();
+        console.error('Error:', error);
+        addMessage('Error: Unable to connect to the server', 'bot', true);
+    });
+
+    messageInput.focus();
+}
+
+function addMessage(text, sender, isError = false) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${sender}`;
+    
+    const bubble = document.createElement('div');
+    bubble.className = 'message-bubble';
+    
+    if (isError) {
+        bubble.style.backgroundColor = '#fee';
+        bubble.style.color = '#c33';
+    }
+    
+    // Format message with markdown-like support
+    let formattedText = text;
+    formattedText = formattedText.replace(/```[\s\S]*?```/g, (match) => {
+        return `<pre><code>${match.replace(/```/g, '')}</code></pre>`;
+    });
+    formattedText = formattedText.replace(/`([^`]+)`/g, '<code>$1</code>');
+    
+    bubble.innerHTML = formattedText;
+    messageDiv.appendChild(bubble);
+    
+    const timeDiv = document.createElement('div');
+    timeDiv.className = 'message-time';
+    timeDiv.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    messageDiv.appendChild(timeDiv);
+    
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function showTypingIndicator() {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'chat-message bot';
+    messageDiv.id = 'typingIndicator';
+    
+    const bubble = document.createElement('div');
+    bubble.className = 'typing-indicator';
+    
+    for (let i = 0; i < 3; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'typing-dot';
+        bubble.appendChild(dot);
+    }
+    
+    messageDiv.appendChild(bubble);
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function removeTypingIndicator() {
+    const indicator = document.getElementById('typingIndicator');
+    if (indicator) {
+        indicator.remove();
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,47 @@
+/* dashboard.css - Admin Dashboard with INR */
+
+.stats-card .inr-value {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.stats-card .inr-value::before {
+    content: "₹";
+    font-size: 1.5rem;
+    margin-right: 2px;
+}
+
+.price-input-group::before {
+    content: "₹";
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 600;
+    color: var(--secondary-color);
+}
+
+.price-input-group input {
+    padding-left: 25px !important;
+}
+
+.currency-badge {
+    background-color: #f0f9ff;
+    color: #0369a1;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.currency-badge::before {
+    content: "Currency: ";
+    font-weight: 400;
+    opacity: 0.8;
+}
+
+.currency-badge::after {
+    content: " (INR)";
+    font-weight: 400;
+    opacity: 0.8;
+}

@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - IoT Verse{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">
+        <i class="bi bi-speedometer2"></i> Admin Dashboard
+    </h1>
+    <span class="badge bg-primary">v1.2.7.9</span>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">{{ stats.total_products }}</h5>
+                        <p class="card-text">Total Products</p>
+                    </div>
+                    <i class="bi bi-device-ssd"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">{{ stats.in_stock }}</h5>
+                        <p class="card-text">In Stock</p>
+                    </div>
+                    <i class="bi bi-check-circle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">{{ stats.low_stock }}</h5>
+                        <p class="card-text">Low Stock</p>
+                    </div>
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">${{ "%.2f"|format(stats.total_value) }}</h5>
+                        <p class="card-text">Total Value</p>
+                    </div>
+                    <i class="bi bi-currency-dollar"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a href="{{ url_for('admin_products') }}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-box-seam"></i> Manage Products
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ url_for('add_product') }}" class="btn btn-outline-success w-100">
+                            <i class="bi bi-plus-circle"></i> Add Product
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-outline-warning w-100" data-bs-toggle="modal" 
+                                data-bs-target="#uploadCSVModal">
+                            <i class="bi bi-upload"></i> Upload CSV
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ url_for('admin_logout') }}" class="btn btn-outline-danger w-100">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSV Upload Modal -->
+<div class="modal fade" id="uploadCSVModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Upload CSV File</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('upload_csv') }}" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Select CSV File</label>
+                        <input type="file" class="form-control" name="csv_file" accept=".csv" required>
+                        <div class="form-text">
+                            CSV format: name,price,quantity,availability,description
+                        </div>
+                    </div>
+                    
+                    <div class="upload-zone">
+                        <i class="bi bi-cloud-arrow-up display-4 text-primary"></i>
+                        <p class="mt-2">Drag & drop CSV file here or click to browse</p>
+                        <small class="text-muted">Supports: .csv files only</small>
+                    </div>
+                    
+                    <div class="alert alert-info mt-3">
+                        <h6><i class="bi bi-info-circle"></i> CSV Processing Notes:</h6>
+                        <ul class="mb-0">
+                            <li>Existing products will be updated based on name</li>
+                            <li>New products will be created</li>
+                            <li>Price changes will be recorded in history</li>
+                            <li>CSV will be converted to JSON automatically</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-upload"></i> Upload & Process
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- System Information -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-database"></i> Data Management
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Products Database</span>
+                        <span class="badge bg-primary rounded-pill">
+                            {{ stats.total_products }} items
+                        </span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Price History</span>
+                        <span class="badge bg-success rounded-pill">
+                            {{ stats.total_products }} tracked
+                        </span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Admin Credentials</span>
+                        <span class="badge bg-warning rounded-pill">Secured</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-gear"></i> System Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="bi bi-shield-check text-success"></i>
+                        <strong>Security:</strong> Bcrypt Password Hashing
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-filetype-json text-primary"></i>
+                        <strong>Database:</strong> JSON File System
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-graph-up text-info"></i>
+                        <strong>Analytics:</strong> Price History Tracking
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-upload text-warning"></i>
+                        <strong>Import:</strong> CSV to JSON Conversion
+                    </li>
+                    <li>
+                        <i class="bi bi-code-slash text-secondary"></i>
+                        <strong>Developer:</strong> MintFire
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
