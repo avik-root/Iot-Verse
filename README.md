@@ -7,7 +7,9 @@
 ![Flask](https://img.shields.io/badge/Flask-2.3.3-lightblue?style=for-the-badge)
 ![AI](https://img.shields.io/badge/AI-Google%20Gemini-orange?style=for-the-badge)
 
-**A comprehensive IoT product management platform with integrated AI chatbot, analytics, and professional dark mode UI**
+**A comprehensive IoT product management platform with integrated AI chatbot, analytics**
+
+**Developed and Secured by MintFire**
 
 [Features](#-features) • [Tech Stack](#-tech-stack) • [Installation](#-installation) • [Usage](#-usage) • [Phases](#-development-phases)
 
