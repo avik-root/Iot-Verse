@@ -717,9 +717,9 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## 📞 Support & Contact
 
-- **Issues:** [GitHub Issues](https://github.com/yourusername/iot-verse/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/yourusername/iot-verse/discussions)
-- **Email:** support@iotverse.com
+- **Issues:** [GitHub Issues](https://github.com/avik-root/iot-verse/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/avik-root/iot-verse/discussions)
+- **Email:** work.aviksamanta@gmail.com
 
 ---
 
