@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - IoT Verse{% endblock %}
+
+{% block content %}
+<div class="error-container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+    <div class="text-center">
+        <div class="error-code mb-4">
+            <h1 class="display-1" style="font-weight: bold; color: #ef4444;">500</h1>
+        </div>
+        
+        <h2 class="mb-3" style="color: #1e293b;">Internal Server Error</h2>
+        
+        <p class="lead mb-4" style="color: #64748b; max-width: 500px; margin: 0 auto;">
+            Something went wrong on our end. Our team has been notified and is working to fix it. Please try again later.
+        </p>
+        
+        <div class="error-illustration mb-4">
+            <i class="bi bi-bug" style="font-size: 4rem; color: #ef4444;"></i>
+        </div>
+        
+        <div class="btn-group gap-3">
+            <a href="{{ url_for('home') }}" class="btn btn-primary btn-lg">
+                <i class="bi bi-house"></i> Back to Home
+            </a>
+            <button onclick="location.reload()" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-arrow-clockwise"></i> Refresh Page
+            </button>
+        </div>
+        
+        <hr class="my-4">
+        
+        <p class="text-muted small">
+            <i class="bi bi-info-circle"></i> Error Code: 500 | Internal Server Error
+        </p>
+    </div>
+</div>
+
+<style>
+    .error-container {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+    }
+    
+    .error-illustration {
+        animation: shake 0.5s infinite;
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    
+    .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    @media (max-width: 768px) {
+        .display-1 {
+            font-size: 4rem !important;
+        }
+        
+        .error-container {
+            margin: 1rem;
+        }
+    }
+    
+    body.dark-mode .error-container {
+        background: linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%);
+    }
+    
+    body.dark-mode .error-container h2,
+    body.dark-mode .error-container p.lead {
+        color: #e2e8f0 !important;
+    }
+</style>
+{% endblock %}

@@ -91,7 +91,8 @@ function restoreOriginalPrices() {
         const originalText = element.getAttribute('data-original-text');
         if (originalText) {
             // Add ₹ symbol for INR
-            element.textContent = '₹' + originalText;
+            const content = '₹' + originalText;
+            element.textContent = content;
             element.removeAttribute('data-converted-currency');
         }
     });

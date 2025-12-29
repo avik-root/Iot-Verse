@@ -37,6 +37,12 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'admin_login'
 
+# Context processor to make config available to all templates
+@app.context_processor
+def inject_config():
+    """Make config available to all templates"""
+    return {'config': load_volta_config()}
+
 # User class for admin
 class AdminUser(UserMixin):
     def __init__(self, id, email):
@@ -100,6 +106,58 @@ def load_price_history():
 def save_price_history(history):
     with open('data/price_history.json', 'w') as f:
         json.dump(history, f, indent=4, default=str)
+
+def clear_price_history_all():
+    """Clear all price history for all products"""
+    price_history = load_price_history()
+    # Clear all entries but keep the keys to maintain structure
+    for product_id in price_history:
+        price_history[product_id] = []
+    save_price_history(price_history)
+    return True
+
+def clear_price_history_individual(product_id):
+    """Clear price history for a specific product"""
+    price_history = load_price_history()
+    if product_id in price_history:
+        price_history[product_id] = []
+        save_price_history(price_history)
+        return True
+    return False
+
+def record_daily_price(products):
+    """Automatically record today's price as history for each product"""
+    price_history = load_price_history()
+    today = datetime.now().strftime('%Y-%m-%d')
+    
+    for product in products:
+        product_id = product['id']
+        current_price = product['price']
+        
+        # Initialize if not exists
+        if product_id not in price_history:
+            price_history[product_id] = []
+        
+        # Check if price already recorded for today
+        today_recorded = False
+        if price_history[product_id]:
+            last_entry = price_history[product_id][-1]
+            last_date = last_entry.get('date', '')[:10]  # Get YYYY-MM-DD
+            if last_date == today:
+                today_recorded = True
+        
+        # If not recorded for today, record current price
+        if not today_recorded:
+            price_history[product_id].append({
+                'date': datetime.now().isoformat(),
+                'price': current_price
+            })
+            
+            # Keep last 365 days of history (1 year)
+            if len(price_history[product_id]) > 365:
+                price_history[product_id] = price_history[product_id][-365:]
+    
+    save_price_history(price_history)
 
 # Currency exchange rates (INR as base)
 EXCHANGE_RATES = {
@@ -491,6 +549,8 @@ def generate_price_graph(product_id):
 @app.route('/')
 def home():
     products = load_products()
+    # Record daily prices for all products
+    record_daily_price(products)
     # Group by type for filtering
     types = sorted(list(set(p.get('type', '') for p in products if p.get('type'))))
     # Calculate total inventory value
@@ -506,6 +566,9 @@ def product_detail(product_id):
     if not product:
         flash('Product not found', 'error')
         return redirect(url_for('home'))
+    
+    # Record daily price for this product
+    record_daily_price([product])
     
     # Generate price graph
     price_graph = generate_price_graph(product_id)
@@ -624,6 +687,9 @@ def admin_logout():
 @login_required
 def admin_dashboard():
     products = load_products()
+    # Record daily prices for all products
+    record_daily_price(products)
+    config = load_volta_config()
     stats = {
         'total_products': len(products),
         'in_stock': sum(1 for p in products if p['availability'] == 'In Stock'),
@@ -632,12 +698,14 @@ def admin_dashboard():
         'total_value': sum(p['price'] * p['quantity'] for p in products),
         'unique_types': len(set(p.get('type', '') for p in products if p.get('type')))
     }
-    return render_template('admin_dashboard.html', stats=stats)
+    return render_template('admin_dashboard.html', stats=stats, config=config)
 
 @app.route('/admin/products')
 @login_required
 def admin_products():
     products = load_products()
+    # Record daily prices for all products
+    record_daily_price(products)
     return render_template('admin_products.html', products=products)
 
 @app.route('/admin/product/add', methods=['GET', 'POST'])
@@ -1000,6 +1068,65 @@ def volta_settings():
     return render_template('admin_volta_settings.html', 
                          config=config,
                          api_key_set=api_key_set)
+
+# Price History Management Routes
+@app.route('/admin/price-history/clear-all', methods=['POST'])
+@login_required
+def clear_all_price_history():
+    """Clear all price history for all products"""
+    try:
+        clear_price_history_all()
+        flash('✓ All price history cleared successfully!', 'success')
+    except Exception as e:
+        flash(f'✗ Error clearing price history: {str(e)}', 'danger')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/price-history/clear/<product_id>', methods=['POST'])
+@login_required
+def clear_price_history(product_id):
+    """Clear price history for a specific product"""
+    try:
+        if clear_price_history_individual(product_id):
+            flash('✓ Price history for this product cleared successfully!', 'success')
+        else:
+            flash('✗ Product not found', 'danger')
+    except Exception as e:
+        flash(f'✗ Error clearing price history: {str(e)}', 'danger')
+    return redirect(url_for('admin_products'))
+
+# Website Maintenance Mode Routes
+@app.route('/admin/maintenance-mode/toggle', methods=['POST'])
+@login_required
+def toggle_maintenance_mode():
+    """Toggle maintenance mode for the entire website"""
+    try:
+        config = load_volta_config()
+        config['maintenance_mode'] = not config['maintenance_mode']
+        save_volta_config(config)
+        status = 'ON' if config['maintenance_mode'] else 'OFF'
+        flash(f'✓ Maintenance mode turned {status}!', 'info')
+    except Exception as e:
+        flash(f'✗ Error toggling maintenance mode: {str(e)}', 'danger')
+    return redirect(url_for('admin_dashboard'))
+
+# Version Management Routes
+@app.route('/admin/version/update', methods=['POST'])
+@login_required
+def update_version():
+    """Update application version"""
+    try:
+        new_version = request.form.get('version', '').strip()
+        if not new_version:
+            flash('✗ Version cannot be empty', 'danger')
+            return redirect(url_for('admin_dashboard'))
+        
+        config = load_volta_config()
+        config['version'] = new_version
+        save_volta_config(config)
+        flash(f'✓ Version updated to {new_version}!', 'success')
+    except Exception as e:
+        flash(f'✗ Error updating version: {str(e)}', 'danger')
+    return redirect(url_for('admin_dashboard'))
 
 # Initialize on startup
 """@app.before_request
@@ -1472,6 +1599,31 @@ window.admin = {
         img.save(default_device_path)'''
     
     print("Default files created successfully")
+
+# Error Handlers
+@app.errorhandler(404)
+def page_not_found(error):
+    """Handle 404 errors"""
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    """Handle 500 errors"""
+    return render_template('500.html'), 500
+
+@app.errorhandler(503)
+def service_unavailable(error):
+    """Handle 503 errors"""
+    return render_template('503.html'), 503
+
+@app.before_request
+def check_maintenance_mode():
+    """Check if maintenance mode is enabled"""
+    config = load_volta_config()
+    if config.get('maintenance_mode', False):
+        # Allow admin to access dashboard during maintenance
+        if not request.path.startswith('/admin') and not request.path.startswith('/static'):
+            return render_template('maintenance.html'), 503
 
 if __name__ == '__main__':
     # Initialize on first run

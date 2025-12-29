@@ -2,12 +2,12 @@
 
 <div align="center">
 
-![IoT Verse](https://img.shields.io/badge/IoT%20Verse-v2.1.1.8-red?style=for-the-badge)
+![IoT Verse](https://img.shields.io/badge/IoT%20Verse-v2.8-blue?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3.9+-green?style=for-the-badge)
 ![Flask](https://img.shields.io/badge/Flask-2.3.3-lightblue?style=for-the-badge)
 ![AI](https://img.shields.io/badge/AI-Google%20Gemini-orange?style=for-the-badge)
 
-**A comprehensive IoT product management platform with integrated AI chatbot, analytics**
+**A comprehensive IoT product management platform with integrated AI chatbot, analytics, and professional dark mode UI**
 
 **Developed and Secured by MintFire**
 
@@ -52,6 +52,34 @@
 
 ---
 
+## 📅 Recent Updates (Dec 29, 2025)
+
+### Latest Enhancements
+- ✨ **Product Search Feature** - Added fast, real-time search functionality on the admin products page
+  - Search by product name, description, or price
+  - Instant filtering as you type
+  - Smart "no results" message with helpful UI feedback
+  
+- 📊 **Price History System** - Implemented comprehensive price tracking
+  - Daily automatic price recording for all products
+  - Historical price data storage and management
+  - Price trend analysis capabilities
+  - Full price history management API endpoints
+  
+- 🎨 **Enhanced Admin Dashboard**
+  - Improved product management interface with drag-and-drop reordering
+  - Quick access to price history and product actions
+  - Bulk operations support (CSV import/export)
+  - Better visual organization and UX
+
+### Bug Fixes & Improvements
+- Fixed product reordering functionality with automatic database persistence
+- Optimized search performance for large product catalogs
+- Improved price history data structure for better scalability
+- Enhanced error handling in admin operations
+
+---
+
 ## ✨ Features
 
 ### Core Features
@@ -88,6 +116,8 @@
   - API key management for Volta chatbot
   - System information display
   - Session management
+  - **NEW:** Fast product search with real-time filtering
+  - **NEW:** Drag-and-drop product reordering
 
 ### Advanced Features
 - 🔄 Real-time price history and trend analysis
@@ -97,6 +127,7 @@
 - 🔒 Password-protected admin credentials
 - 💾 Persistent data storage with JSON
 - 🌐 RESTful API endpoints
+- 🔍 **NEW:** Smart product search functionality with multiple field support
 
 ---
 
@@ -473,7 +504,14 @@ GET  /api/products                  # Get all products (JSON)
 GET  /api/product/<id>              # Get single product (JSON)
 GET  /api/products/filter           # Filter products by type
 GET  /api/price-history/<id>        # Get price history for product
+POST /record-daily-price            # Record daily price for all products
 ```
+
+**Price History Features:**
+- Automatic daily price tracking
+- Historical price data storage (up to 365 days)
+- Price trend analysis
+- Bulk price history management
 
 ### Admin Routes (Login Required)
 
@@ -490,13 +528,21 @@ POST /logout                        # Logout admin
 
 #### Product Management
 ```
-GET  /admin-products                # Product management page
+GET  /admin-products                # Product management page with search
 POST /add-product                   # Add new product
 POST /edit-product/<id>             # Edit product
 POST /delete-product/<id>           # Delete product
 POST /import-csv                    # Bulk import from CSV
 GET  /export-products               # Export products as CSV
+POST /api/products/reorder          # Reorder products (drag-and-drop)
+POST /clear-price-history/<id>      # Clear price history for product
 ```
+
+**NEW Search Functionality:**
+- Real-time product search on admin products page
+- Search by: product name, description, price, type
+- Instant filtering without page reload
+- Clear button for quick search reset
 
 #### Volta Settings
 ```
@@ -616,6 +662,24 @@ POST /admin/volta-settings          # Update Volta settings
 2. Check `static/images` directory exists and has write permissions
 3. Restart Flask application
 4. Clear browser cache
+
+### Issue: Product Search Not Working
+**Solution:**
+1. Ensure JavaScript is enabled in your browser
+2. Check browser console for errors (F12)
+3. Verify product data is loaded in `products.json`
+4. Clear browser cache and reload admin products page
+5. Try searching with simple keywords first
+
+### Issue: Price History Data Missing
+**Solution:**
+1. Verify `data/price_history.json` exists
+2. Check file permissions: `chmod 644 data/price_history.json`
+3. Run price recording script manually:
+   ```bash
+   python3 -c "from app import record_daily_price, load_products; record_daily_price(load_products())"
+   ```
+4. Verify cron job is running (if automated)
 
 ### Issue: Port 5000 Already in Use
 **Solution:**

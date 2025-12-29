@@ -7,8 +7,17 @@
     <h1 class="h2">
         <i class="bi bi-speedometer2"></i> Admin Dashboard
     </h1>
-    <span class="badge bg-primary">v2.1.1.8</span>
+    <span class="badge bg-primary">v{{ config.version }}</span>
 </div>
+
+<!-- Maintenance Mode Alert -->
+{% if config.maintenance_mode %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-triangle"></i>
+    <strong>Maintenance Mode is ON</strong> - Website is currently in maintenance mode. Users will see a maintenance page.
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endif %}
 
 <!-- Stats Cards -->
 <div class="row mb-4">
@@ -59,7 +68,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div>
-                        <h5 class="card-title">${{ "%.2f"|format(stats.total_value) }}</h5>
+                        <h5 class="card-title">₹{{ "%.2f"|format(stats.total_value) }}</h5>
                         <p class="card-text">Total Value</p>
                     </div>
                     <i class="bi bi-currency-dollar"></i>
@@ -150,6 +159,133 @@
     </div>
 </div>
 
+<!-- System Configuration Row -->
+<div class="row mb-4">
+    <!-- Website Maintenance Mode -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h5 class="card-title mb-0" style="color: #000;">
+                    <i class="bi bi-tools"></i> Maintenance Mode
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-3" style="color: #64748b;">
+                    Toggle maintenance mode to temporarily disable website for users while keeping admin access active.
+                </p>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="form-check form-switch" style="margin-top: 0;">
+                        <div class="badge {% if config.maintenance_mode %}bg-danger{% else %}bg-success{% endif %} p-2">
+                            <i class="bi {% if config.maintenance_mode %}bi-exclamation-circle{% else %}bi-check-circle{% endif %}"></i>
+                            {% if config.maintenance_mode %} ON {% else %} OFF {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <form method="POST" action="{{ url_for('toggle_maintenance_mode') }}">
+                    <button type="submit" class="btn btn-{% if config.maintenance_mode %}success{% else %}warning{% endif %} w-100">
+                        <i class="bi bi-toggle{% if config.maintenance_mode %}-on{% else %}-off{% endif %}"></i>
+                        {% if config.maintenance_mode %}Turn OFF{% else %}Turn ON{% endif %} Maintenance Mode
+                    </button>
+                </form>
+                <small class="text-muted d-block mt-2">
+                    <i class="bi bi-info-circle"></i> Admin users can still access the dashboard during maintenance
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Version Management -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-info">
+                <h5 class="card-title mb-0" style="color: #fff;">
+                    <i class="bi bi-tag"></i> Version Management
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-3" style="color: #64748b;">
+                    Update the application version displayed on the dashboard.
+                </p>
+                <form method="POST" action="{{ url_for('update_version') }}">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" name="version" value="{{ config.version }}" placeholder="e.g., 2.1.1.8" required>
+                        <button class="btn btn-info" type="submit">
+                            <i class="bi bi-check-circle"></i> Update
+                        </button>
+                    </div>
+                </form>
+                <div class="alert alert-light border" style="margin: 0;">
+                    <strong>Current Version:</strong> <code>{{ config.version }}</code>
+                </div>
+                <small class="text-muted d-block mt-2">
+                    <i class="bi bi-info-circle"></i> Version format: Major.Minor.Patch.Build
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Price History Management -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-danger">
+                <h5 class="card-title mb-0" style="color: #fff;">
+                    <i class="bi bi-clock-history"></i> Price History Management
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-3" style="color: #64748b;">
+                    Manage and clear price history for products. This helps maintain clean records or reset tracking data.
+                </p>
+                
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card border-danger border-2 bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="bi bi-trash-fill text-danger"></i> Clear All Price History
+                                </h6>
+                                <p class="card-text small" style="color: #64748b;">
+                                    Remove price history for ALL products at once. This action cannot be undone.
+                                </p>
+                                <form method="POST" action="{{ url_for('clear_all_price_history') }}" style="display: inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm w-100" 
+                                            onclick="return confirm('Are you sure you want to clear ALL price history? This cannot be undone!');">
+                                        <i class="bi bi-exclamation-triangle"></i> Clear All
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card border-warning border-2 bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="bi bi-pencil-square text-warning"></i> Clear Individual History
+                                </h6>
+                                <p class="card-text small" style="color: #64748b;">
+                                    Clear price history for specific products from the products list.
+                                </p>
+                                <a href="{{ url_for('admin_products') }}" class="btn btn-warning btn-sm w-100">
+                                    <i class="bi bi-box-seam"></i> Go to Products
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning mt-3 mb-0">
+                    <i class="bi bi-lightbulb"></i> <strong>Tip:</strong> Individual product price history can be cleared from the 
+                    <a href="{{ url_for('admin_products') }}" class="alert-link">Products Management</a> page.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- System Information -->
 <div class="row">
     <div class="col-md-6">
@@ -216,4 +352,30 @@
         </div>
     </div>
 </div>
+
+<style>
+    .card-header.bg-warning {
+        background-color: #fbbf24 !important;
+    }
+    
+    .card-header.bg-danger {
+        background-color: #ef4444 !important;
+    }
+    
+    .card-header.bg-info {
+        background-color: #3b82f6 !important;
+    }
+    
+    body.dark-mode .card-header.bg-warning {
+        background-color: #d97706 !important;
+    }
+    
+    body.dark-mode .card-header.bg-danger {
+        background-color: #dc2626 !important;
+    }
+    
+    body.dark-mode .card-header.bg-info {
+        background-color: #1d4ed8 !important;
+    }
+</style>
 {% endblock %}

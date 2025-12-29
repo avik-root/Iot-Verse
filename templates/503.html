@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Service Unavailable - IoT Verse{% endblock %}
+
+{% block content %}
+<div class="error-container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+    <div class="text-center">
+        <div class="error-code mb-4">
+            <h1 class="display-1" style="font-weight: bold; color: #f59e0b;">503</h1>
+        </div>
+        
+        <h2 class="mb-3" style="color: #1e293b;">Service Unavailable</h2>
+        
+        <p class="lead mb-4" style="color: #64748b; max-width: 500px; margin: 0 auto;">
+            Our service is temporarily unavailable. We're performing maintenance to serve you better. Please check back soon!
+        </p>
+        
+        <div class="error-illustration mb-4">
+            <i class="bi bi-tools" style="font-size: 4rem; color: #f59e0b;"></i>
+        </div>
+        
+        <div class="alert alert-warning alert-dismissible fade show" role="alert" style="max-width: 500px; margin: 2rem auto;">
+            <i class="bi bi-info-circle"></i>
+            <strong>Maintenance in Progress</strong>
+            <p class="mb-0 mt-2">We're upgrading our systems to provide you with a better experience. Expected return time will be announced shortly.</p>
+        </div>
+        
+        <div class="btn-group gap-3">
+            <button onclick="location.reload()" class="btn btn-primary btn-lg">
+                <i class="bi bi-arrow-clockwise"></i> Check Again
+            </button>
+            <a href="javascript:history.back()" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-arrow-left"></i> Go Back
+            </a>
+        </div>
+        
+        <hr class="my-4">
+        
+        <p class="text-muted small">
+            <i class="bi bi-info-circle"></i> Error Code: 503 | Service Unavailable
+        </p>
+    </div>
+</div>
+
+<style>
+    .error-container {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+    }
+    
+    .error-illustration {
+        animation: rotate 3s linear infinite;
+    }
+    
+    @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    @media (max-width: 768px) {
+        .display-1 {
+            font-size: 4rem !important;
+        }
+        
+        .error-container {
+            margin: 1rem;
+        }
+    }
+    
+    body.dark-mode .error-container {
+        background: linear-gradient(135deg, #78350f 0%, #451a03 100%);
+    }
+    
+    body.dark-mode .error-container h2,
+    body.dark-mode .error-container p.lead {
+        color: #e2e8f0 !important;
+    }
+    
+    body.dark-mode .alert-warning {
+        background-color: rgba(217, 119, 6, 0.2) !important;
+        border-color: #f59e0b !important;
+        color: #e2e8f0 !important;
+    }
+</style>
+{% endblock %}

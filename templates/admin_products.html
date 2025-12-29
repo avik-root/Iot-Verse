@@ -23,6 +23,26 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
 
+<!-- Search Section -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="input-group input-group-lg">
+            <span class="input-group-text bg-light border-0">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="text" class="form-control border-0" id="productSearch" 
+                   placeholder="Search products by name, description, or type...">
+            <button class="btn btn-outline-secondary" type="button" id="clearSearch" 
+                    title="Clear search">
+                <i class="bi bi-x-circle"></i>
+            </button>
+        </div>
+        <small class="text-muted mt-2 d-block">
+            <i class="bi bi-info-circle"></i> Search is instant as you type
+        </small>
+    </div>
+</div>
+
 <!-- Products Table -->
 <div class="card">
     <div class="card-body">
@@ -70,19 +90,25 @@
                         </td>
                         <td>${{ "%.2f"|format(product.price * product.quantity) }}</td>
                         <td>
-                            <div class="btn-group btn-group-sm">
+                            <div class="btn-group-vertical w-100" role="group">
                                 <a href="{{ url_for('product_detail', product_id=product.id) }}" 
-                                   class="btn btn-outline-info" title="View">
-                                    <i class="bi bi-eye"></i>
+                                   class="btn btn-sm btn-outline-info" title="View Product">
+                                    <i class="bi bi-eye"></i> View
                                 </a>
                                 <a href="{{ url_for('edit_product', product_id=product.id) }}" 
-                                   class="btn btn-outline-warning" title="Edit">
-                                    <i class="bi bi-pencil"></i>
+                                   class="btn btn-sm btn-outline-warning" title="Edit Product">
+                                    <i class="bi bi-pencil"></i> Edit
                                 </a>
+                                <form method="POST" action="{{ url_for('clear_price_history', product_id=product.id) }}" 
+                                      class="d-grid" onsubmit="return confirm('Clear price history for this product?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary" title="Clear Price History">
+                                        <i class="bi bi-clock-history"></i> Clear History
+                                    </button>
+                                </form>
                                 <form method="POST" action="{{ url_for('delete_product', product_id=product.id) }}" 
-                                      class="d-inline" onsubmit="return confirm('Delete this product?');">
-                                    <button type="submit" class="btn btn-outline-danger" title="Delete">
-                                        <i class="bi bi-trash"></i>
+                                      class="d-grid" onsubmit="return confirm('Delete this product?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                        <i class="bi bi-trash"></i> Delete
                                     </button>
                                 </form>
                             </div>
@@ -183,6 +209,31 @@
 </div>
 
 <style>
+/* Search Section Styling */
+#productSearch {
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+    transition: box-shadow 0.2s ease;
+}
+
+#productSearch:focus {
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+#clearSearch {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#clearSearch:hover {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.input-group-lg .input-group-text {
+    padding: 0.75rem 1rem;
+}
+
 .product-row.dragging {
     opacity: 0.5;
     background-color: #e3f2fd;
@@ -200,6 +251,60 @@
 .drag-handle:active {
     cursor: grabbing;
 }
+
+/* Action Button Styling */
+.btn-group-vertical {
+    gap: 0.25rem;
+}
+
+.btn-group-vertical .btn {
+    border-radius: 0.375rem;
+    white-space: nowrap;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.btn-group-vertical .btn:hover {
+    transform: translateX(2px);
+}
+
+.btn-group-vertical .btn-outline-info:hover {
+    background-color: #0dcaf0;
+    color: white;
+}
+
+.btn-group-vertical .btn-outline-warning:hover {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.btn-group-vertical .btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-group-vertical .btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Ensure buttons fit properly in table */
+td {
+    vertical-align: middle;
+}
+
+.table .btn-group-vertical {
+    min-width: 120px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .btn-group-vertical .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+}
 </style>
 
 <script>
@@ -208,6 +313,60 @@ let draggedOverElement = null;
 
 const productsList = document.getElementById('productsList');
 const productRows = document.querySelectorAll('.product-row');
+
+// Search functionality
+const productSearch = document.getElementById('productSearch');
+const clearSearch = document.getElementById('clearSearch');
+
+productSearch.addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+    
+    productRows.forEach(row => {
+        const productName = row.querySelector('strong').textContent.toLowerCase();
+        const productDesc = row.querySelector('.text-muted').textContent.toLowerCase();
+        const productPrice = row.querySelector('.price-tag').textContent.toLowerCase();
+        
+        if (productName.includes(searchTerm) || 
+            productDesc.includes(searchTerm) || 
+            productPrice.includes(searchTerm)) {
+            row.style.display = '';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+    
+    // Show message if no products found
+    const noResultsMsg = document.getElementById('noSearchResults');
+    if (visibleCount === 0 && searchTerm) {
+        if (!noResultsMsg) {
+            const msg = document.createElement('tr');
+            msg.id = 'noSearchResults';
+            msg.innerHTML = `
+                <td colspan="8" class="text-center py-4">
+                    <i class="bi bi-search display-6 text-muted"></i>
+                    <p class="text-muted mt-2">No products found matching "<strong>${productSearch.value}</strong>"</p>
+                </td>
+            `;
+            productsList.appendChild(msg);
+        }
+    } else if (noResultsMsg) {
+        noResultsMsg.remove();
+    }
+    
+    // Toggle clear button visibility
+    clearSearch.style.display = searchTerm ? 'block' : 'none';
+});
+
+clearSearch.addEventListener('click', function() {
+    productSearch.value = '';
+    productSearch.dispatchEvent(new Event('input'));
+    productSearch.focus();
+});
+
+// Hide clear button initially
+clearSearch.style.display = 'none';
 
 // Add drag event listeners to each product row
 productRows.forEach(row => {

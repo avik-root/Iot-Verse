@@ -225,7 +225,7 @@
 <div class="row mb-4">
     <div class="col-12">
         <div class="total-value-card">
-            <h3 class="format-price">{{ "%.2f"|format(total_value) }}</h3>
+            <h3 class="format-price" id="totalValueDisplay" data-price-inr="{{ total_value }}" data-original-text="{{ "%.2f"|format(total_value) }}">₹{{ "%.2f"|format(total_value) }}</h3>
             <p>Total Inventory Value ({{ products|length }} devices)</p>
         </div>
     </div>

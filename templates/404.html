@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Page Not Found - IoT Verse{% endblock %}
+
+{% block content %}
+<div class="error-container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+    <div class="text-center">
+        <div class="error-code mb-4">
+            <h1 class="display-1" style="font-weight: bold; color: #ef4444;">404</h1>
+        </div>
+        
+        <h2 class="mb-3" style="color: #1e293b;">Page Not Found</h2>
+        
+        <p class="lead mb-4" style="color: #64748b; max-width: 500px; margin: 0 auto;">
+            Oops! The page you're looking for doesn't exist. It might have been moved or deleted.
+        </p>
+        
+        <div class="error-illustration mb-4">
+            <i class="bi bi-exclamation-triangle" style="font-size: 4rem; color: #f59e0b;"></i>
+        </div>
+        
+        <div class="btn-group gap-3">
+            <a href="{{ url_for('home') }}" class="btn btn-primary btn-lg">
+                <i class="bi bi-house"></i> Back to Home
+            </a>
+            <a href="{{ url_for('search') }}" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-search"></i> Search Products
+            </a>
+        </div>
+        
+        <hr class="my-4">
+        
+        <p class="text-muted small">
+            <i class="bi bi-info-circle"></i> Error Code: 404 | Page Not Found
+        </p>
+    </div>
+</div>
+
+<style>
+    .error-container {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+    }
+    
+    .error-illustration {
+        animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+    
+    .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    @media (max-width: 768px) {
+        .display-1 {
+            font-size: 4rem !important;
+        }
+        
+        .error-container {
+            margin: 1rem;
+        }
+    }
+    
+    body.dark-mode .error-container {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    }
+    
+    body.dark-mode .error-container h2,
+    body.dark-mode .error-container p.lead {
+        color: #e2e8f0 !important;
+    }
+</style>
+{% endblock %}
