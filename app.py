@@ -244,6 +244,8 @@ def load_volta_config():
             'enabled': False,  # Disabled by default until admin enables it
             'version': '2.1.0.0',  # Default version
             'maintenance_mode': False,
+            'ascii_art_enabled': False,  # ASCII art toggle
+            'ascii_art': '⠀⠀⠀⠀⠀⢀⣴⣿⣿⣿⣦⠀\n⠀⠀⠀⠀⣰⣿⡟⢻⣿⡟⢻⣧\n⠀⠀⠀⣰⣿⣿⣇⣸⣿⣇⣸⣿\n⠀⠀⣴⣿⣿⣿⣿⠟⢻⣿⣿⣿\n⣠⣾⣿⣿⣿⣿⣿⣤⣼⣿⣿⠇\n⢿⡿⢿⣿⣿⣿⣿⣿⣿⣿⡿⠀\n⠀⠀⠈⠿⠿⠋⠙⢿⣿⡿⠁⠀',  # Default ASCII art
             'system_prompt': """You are Volta, an intelligent IoT assistant specialized in IoT devices, Internet of Things, 
 Artificial Intelligence (AI), Machine Learning (ML), Cyber Security, and Computer Science Engineering (CSE) topics.
 
@@ -1156,6 +1158,45 @@ def update_version():
         flash(f'✓ Version updated to {new_version}!', 'success')
     except Exception as e:
         flash(f'✗ Error updating version: {str(e)}', 'danger')
+    return redirect(url_for('admin_dashboard'))
+
+# ASCII Art Management Routes
+@app.route('/admin/ascii-art/update', methods=['POST'])
+@login_required
+def update_ascii_art():
+    """Update ASCII art content"""
+    try:
+        new_ascii_art = request.form.get('ascii_art', '').strip()
+        ascii_art_enabled = request.form.get('ascii_art_enabled') == 'on'
+        
+        if not new_ascii_art and ascii_art_enabled:
+            flash('✗ ASCII art cannot be empty if enabled', 'danger')
+            return redirect(url_for('admin_dashboard'))
+        
+        config = load_volta_config()
+        config['ascii_art'] = new_ascii_art
+        config['ascii_art_enabled'] = ascii_art_enabled
+        save_volta_config(config)
+        
+        status = "enabled" if ascii_art_enabled else "disabled"
+        flash(f'✓ ASCII art updated and {status}!', 'success')
+    except Exception as e:
+        flash(f'✗ Error updating ASCII art: {str(e)}', 'danger')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/ascii-art/toggle', methods=['POST'])
+@login_required
+def toggle_ascii_art():
+    """Toggle ASCII art display"""
+    try:
+        config = load_volta_config()
+        config['ascii_art_enabled'] = not config.get('ascii_art_enabled', False)
+        save_volta_config(config)
+        
+        status = "enabled" if config['ascii_art_enabled'] else "disabled"
+        flash(f'✓ ASCII art {status}!', 'success')
+    except Exception as e:
+        flash(f'✗ Error toggling ASCII art: {str(e)}', 'danger')
     return redirect(url_for('admin_dashboard'))
 
 # Initialize on startup

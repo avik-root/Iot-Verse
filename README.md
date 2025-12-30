@@ -55,6 +55,15 @@
 ## 📅 Recent Updates (Dec 30, 2025)
 
 ### Latest Enhancements
+- 🎨 **ASCII Art Animation Display** - Welcome visitors with animated ASCII art
+  - Displays before search section on home page
+  - Smooth floating animation with pulsing glow effect
+  - Automatically adapts to dark/light mode colors
+  - Admin can customize ASCII art content and toggle on/off
+  - Transparent background for seamless integration
+  - Fully responsive and hardware-accelerated animations
+  - [See Full Documentation](README/ASCII_ART_ANIMATION.md)
+
 - ✨ **Product Search Feature** - Added fast, real-time search functionality on the admin products page
   - Search by product name, description, or price
   - Instant filtering as you type

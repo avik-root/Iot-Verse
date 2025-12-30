@@ -99,6 +99,173 @@
 {% endblock %}
 
 {% block content %}
+<!-- ASCII Art Display Section with Animation -->
+{% if config.ascii_art_enabled and config.ascii_art %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card ascii-art-container" style="background: transparent; border: none; overflow: visible; box-shadow: none;">
+            <div class="card-body text-center ascii-art-body" style="padding: 2rem; position: relative; background: transparent; border: none;">
+                <style>
+                    /* Dark mode detection */
+                    @media (prefers-color-scheme: dark) {
+                        .ascii-art-body pre {
+                            color: #4f46e5;
+                            text-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
+                        }
+                    }
+                    
+                    @media (prefers-color-scheme: light) {
+                        .ascii-art-body pre {
+                            color: #DC143C;
+                            text-shadow: 0 0 10px rgba(220, 20, 60, 0.2);
+                        }
+                    }
+                    
+                    /* Apply dark mode class if available */
+                    body.dark-mode .ascii-art-body pre {
+                        color: #4f46e5;
+                        text-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
+                    }
+                    
+                    body.light-mode .ascii-art-body pre {
+                        color: #DC143C;
+                        text-shadow: 0 0 10px rgba(220, 20, 60, 0.2);
+                    }
+                    
+                    /* ASCII Art Animation */
+                    @keyframes float {
+                        0%, 100% {
+                            transform: translateY(0px);
+                            opacity: 1;
+                        }
+                        50% {
+                            transform: translateY(-15px);
+                            opacity: 0.95;
+                        }
+                    }
+                    
+                    @keyframes glow {
+                        0%, 100% {
+                            filter: drop-shadow(0 0 5px rgba(220, 20, 60, 0.3));
+                        }
+                        50% {
+                            filter: drop-shadow(0 0 15px rgba(220, 20, 60, 0.6));
+                        }
+                    }
+                    
+                    /* Chrome-specific fixes for better rendering */
+                    .ascii-art-body pre {
+                        font-size: 1.2rem;
+                        font-family: 'Courier New', 'Courier', monospace;
+                        margin: 0;
+                        white-space: pre-wrap;
+                        word-wrap: break-word;
+                        letter-spacing: 2px;
+                        line-height: 1.3;
+                        animation: float 3s ease-in-out infinite, glow 3s ease-in-out infinite;
+                        transition: color 0.3s ease;
+                        font-weight: 600;
+                        -webkit-font-smoothing: antialiased;
+                        -moz-osx-font-smoothing: grayscale;
+                        -webkit-text-rendering: optimizeLegibility;
+                        text-rendering: optimizeLegibility;
+                        /* Chrome rendering improvements */
+                        transform: translate3d(0, 0, 0);
+                        -webkit-transform: translate3d(0, 0, 0);
+                        will-change: transform;
+                    }
+                    
+                    .ascii-art-welcome {
+                        margin-top: 1.5rem;
+                        font-size: 0.95rem;
+                        animation: fadeInOut 4s ease-in-out infinite;
+                        -webkit-font-smoothing: antialiased;
+                    }
+                    
+                    @keyframes fadeInOut {
+                        0%, 100% {
+                            opacity: 0.8;
+                        }
+                        50% {
+                            opacity: 1;
+                        }
+                    }
+                    
+                    /* Responsive adjustments */
+                    @media (max-width: 768px) {
+                        .ascii-art-body pre {
+                            font-size: 0.9rem;
+                            letter-spacing: 1px;
+                        }
+                    }
+                    
+                    /* Remove box styling for dark mode */
+                    body.dark-mode .ascii-art-container,
+                    body.dark-mode .ascii-art-body {
+                        background: transparent !important;
+                        border: none !important;
+                        box-shadow: none !important;
+                    }
+                    
+                    @media (prefers-color-scheme: dark) {
+                        .ascii-art-container,
+                        .ascii-art-body {
+                            background: transparent !important;
+                            border: none !important;
+                            box-shadow: none !important;
+                        }
+                    }
+                </style>
+                <pre class="ascii-art-text">{{ config.ascii_art }}</pre>
+                <div class="ascii-art-welcome" style="color: #DC143C;">
+                    <i class="bi bi-sparkles"></i> Welcome to IoT Verse
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Dynamic color adjustment based on dark mode
+    function updateAsciiArtColors() {
+        const asciiPre = document.querySelector('.ascii-art-body pre');
+        const asciiWelcome = document.querySelector('.ascii-art-welcome');
+        
+        if (!asciiPre) return;
+        
+        // Check if dark mode is enabled
+        const isDarkMode = document.documentElement.getAttribute('data-bs-theme') === 'dark' ||
+                          document.body.classList.contains('dark-mode') ||
+                          window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (isDarkMode) {
+            asciiPre.style.color = '#e54646ff';
+            asciiPre.style.textShadow = '0 0 10px rgba(255, 0, 0, 0.3)';
+            if (asciiWelcome) asciiWelcome.style.color = '#6366f1';
+        } else {
+            asciiPre.style.color = '#DC143C';
+            asciiPre.style.textShadow = '0 0 10px rgba(220, 20, 60, 0.2)';
+            if (asciiWelcome) asciiWelcome.style.color = '#DC143C';
+        }
+    }
+    
+    // Update colors on load
+    document.addEventListener('DOMContentLoaded', updateAsciiArtColors);
+    
+    // Update colors when dark mode toggle is clicked
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('[data-bs-toggle="dark-mode"], .dark-mode-toggle, #darkModeToggle')) {
+            setTimeout(updateAsciiArtColors, 100);
+        }
+    });
+    
+    // Listen for theme changes
+    if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateAsciiArtColors);
+    }
+</script>
+{% endif %}
+
 <!-- Currency Indicator -->
 <div class="row mb-3">
     <div class="col-12 d-flex justify-content-between align-items-center">

@@ -224,6 +224,53 @@
             </div>
         </div>
     </div>
+
+    <!-- ASCII Art Management -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success">
+                <h5 class="card-title mb-0" style="color: #fff;">
+                    <i class="bi bi-palette"></i> ASCII Art Management
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-3" style="color: #64748b;">
+                    Customize ASCII art displayed on the home page before the search section.
+                </p>
+                <form method="POST" action="{{ url_for('update_ascii_art') }}">
+                    <div class="mb-3">
+                        <label for="ascii_art" class="form-label">ASCII Art Content</label>
+                        <textarea class="form-control" id="ascii_art" name="ascii_art" rows="6" placeholder="Paste your ASCII art here..." style="font-family: 'Courier New', monospace; font-size: 0.85rem;">{{ config.ascii_art if config.ascii_art else '' }}</textarea>
+                        <small class="text-muted d-block mt-2">
+                            Use Courier New font for best display. Supports Unicode characters.
+                        </small>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="ascii_art_enabled" name="ascii_art_enabled" {% if config.ascii_art_enabled %}checked{% endif %}>
+                        <label class="form-check-label" for="ascii_art_enabled">
+                            <i class="bi bi-eye"></i> Show ASCII Art on Home Page
+                        </label>
+                    </div>
+                    <button class="btn btn-success w-100" type="submit">
+                        <i class="bi bi-check-circle"></i> Update ASCII Art
+                    </button>
+                </form>
+                <div class="alert alert-light border mt-3" style="margin: 0;">
+                    <strong>Status:</strong> 
+                    {% if config.ascii_art_enabled %}
+                        <span class="badge bg-success"><i class="bi bi-check-circle"></i> Enabled</span>
+                    {% else %}
+                        <span class="badge bg-secondary"><i class="bi bi-eye-slash"></i> Disabled</span>
+                    {% endif %}
+                </div>
+                <!-- ASCII Art Preview -->
+                <div class="mt-3 p-3" style="background: #f8f9fa; border-radius: 0.375rem; border: 1px solid #dee2e6;">
+                    <small class="text-muted d-block mb-2"><i class="bi bi-eye"></i> Light Mode Preview (Blood Red)</small>
+                    <pre style="color: #DC143C; font-size: 0.85rem; font-family: 'Courier New', monospace; margin: 0; white-space: pre-wrap; word-wrap: break-word;">{{ config.ascii_art if config.ascii_art else 'Your ASCII art preview here...' }}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Price History Management -->
