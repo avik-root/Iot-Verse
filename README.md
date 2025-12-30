@@ -52,7 +52,7 @@
 
 ---
 
-## 📅 Recent Updates (Dec 29, 2025)
+## 📅 Recent Updates (Dec 30, 2025)
 
 ### Latest Enhancements
 - ✨ **Product Search Feature** - Added fast, real-time search functionality on the admin products page
@@ -65,6 +65,26 @@
   - Historical price data storage and management
   - Price trend analysis capabilities
   - Full price history management API endpoints
+
+- 🔒 **Automatic Session Timeout** - New security feature for admin panel
+  - 30-minute automatic session expiration on inactivity
+  - Visual warning at 25 minutes with countdown timer
+  - User activity detection (click, keyboard, scroll, mouse movement)
+  - Secure session cookies with HttpOnly and SameSite protection
+  - Professional timeout modal with "Stay Logged In" option
+
+- 💱 **Fixed Currency Dropdown** - Now works on ALL pages globally
+  - Previously only worked on home page
+  - Now available on: search, product details, chat, admin pages, and all other pages
+  - Global context processor ensures consistent currency support everywhere
+  - All 11 currencies accessible from any page
+
+- 🏷️ **Fixed Version Control System** - Centralized version management
+  - Previously admin login showed hardcoded version (v2.1.1.8)
+  - Now all pages use dynamic version from admin settings
+  - Version updates in admin dashboard reflect everywhere instantly
+  - Centralized version management in `data/volta_config.json`
+  - Supports version format: Major.Minor.Patch.Build
   
 - 🎨 **Enhanced Admin Dashboard**
   - Improved product management interface with drag-and-drop reordering
@@ -74,9 +94,14 @@
 
 ### Bug Fixes & Improvements
 - Fixed product reordering functionality with automatic database persistence
+- Fixed currency dropdown availability across all pages (not just home)
+- Fixed version control system - all pages now use centralized version from config
+- Removed hardcoded version strings from templates
 - Optimized search performance for large product catalogs
 - Improved price history data structure for better scalability
 - Enhanced error handling in admin operations
+- Added comprehensive session security implementation
+- Implemented global context processors for consistent data availability
 
 ---
 
@@ -115,9 +140,11 @@
   - Admin settings and configuration management
   - API key management for Volta chatbot
   - System information display
-  - Session management
+  - **NEW:** Automatic session timeout (30 min inactivity)
+  - **NEW:** Session timeout warning with countdown
   - **NEW:** Fast product search with real-time filtering
   - **NEW:** Drag-and-drop product reordering
+  - **NEW:** Secure session cookies (HttpOnly, SameSite)
 
 ### Advanced Features
 - 🔄 Real-time price history and trend analysis
@@ -128,6 +155,9 @@
 - 💾 Persistent data storage with JSON
 - 🌐 RESTful API endpoints
 - 🔍 **NEW:** Smart product search functionality with multiple field support
+- ⏱️ **NEW:** Automatic session timeout with inactivity detection
+- ⚠️ **NEW:** Session expiration warning modal
+- 💱 **NEW:** Global currency dropdown on all pages (11 currencies supported)
 
 ---
 
@@ -338,6 +368,20 @@ First time setup:
 - Click the theme toggle button (☀️/🌙) in the navbar
 - Preference is saved to browser localStorage
 - Persists across sessions
+
+### Session & Security Management
+- **Automatic Session Timeout**: 30 minutes of inactivity
+- **Timeout Warning**: Alert appears at 25 minutes with countdown timer
+- **Activity Detection**: Session extends with any user activity (click, scroll, keyboard)
+- **Session Options**:
+  - Click "Stay Logged In" in warning modal to continue
+  - Click "Logout Now" to logout manually
+  - Let timer expire for automatic logout
+- **Security Features**:
+  - HttpOnly cookies prevent JavaScript access
+  - SameSite protection against CSRF attacks
+  - Secure flag enabled in production (HTTPS)
+- **Configuration**: See [SESSION_TIMEOUT_CONFIG.md](SESSION_TIMEOUT_CONFIG.md) for customization
 
 ### Product Management Workflow
 ```
@@ -680,6 +724,31 @@ POST /admin/volta-settings          # Update Volta settings
    python3 -c "from app import record_daily_price, load_products; record_daily_price(load_products())"
    ```
 4. Verify cron job is running (if automated)
+
+### Issue: Session Timeout Not Working
+**Solution:**
+1. Verify `SESSION_REFRESH_EACH_REQUEST = True` in app.py
+2. Check `session_manager.js` is loaded: Open DevTools (F12) and check Scripts tab
+3. Ensure JavaScript is enabled in browser
+4. Verify timeout settings in `session_manager.js`
+5. Clear browser cookies and restart Flask app
+6. Check browser console for JavaScript errors
+
+### Issue: Session Timeout Warning Modal Not Appearing
+**Solution:**
+1. Verify Bootstrap is loaded: Check DevTools > Network tab
+2. Check browser console for errors (F12)
+3. Verify `session_manager.js` is included in base.html
+4. Ensure admin route check is working: `if window.location.pathname.startsWith('/admin')`
+5. Test on `/admin/dashboard` page (modal only shows on admin routes)
+
+### Issue: Session Expires Immediately
+**Solution:**
+1. Check `PERMANENT_SESSION_LIFETIME` setting (should be 30 minutes)
+2. Verify `SESSION_REFRESH_EACH_REQUEST = True`
+3. Check if server time is correct
+4. Ensure session cookies are not blocked
+5. Try in incognito/private browser mode
 
 ### Issue: Port 5000 Already in Use
 **Solution:**

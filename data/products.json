@@ -16,13 +16,13 @@
         "id": "6c94cb99-3a74-4357-88e2-10fb94651f6e",
         "name": "ESP32 DEV",
         "price": 250.0,
-        "quantity": 4,
+        "quantity": 5,
         "availability": "In Stock",
         "type": "Microcontroller",
         "description": "The ESP32 DEV is a development board based on the ESP32 microcontroller, which integrates Wi-Fi and Bluetooth capabilities. It's designed for prototyping and developing various IoT applications, offering a wide array of GPIO pins, making it highly versatile for connecting sensors, displays, and other peripherals.",
         "image": "6c94cb99-3a74-4357-88e2-10fb94651f6e_es32.jpg",
         "created_at": "2025-12-28T01:20:22.255886",
-        "last_updated": "2025-12-28T02:07:12.384664",
+        "last_updated": "2025-12-30T16:01:42.518028",
         "index": 1
     },
     {

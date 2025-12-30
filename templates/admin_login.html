@@ -5,6 +5,13 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6 col-lg-4">
+        <!-- Session Timeout Info Alert -->
+        <div class="alert alert-info alert-dismissible fade show mb-3" role="alert">
+            <i class="bi bi-clock-history"></i>
+            <strong>Session Timeout:</strong> Admin sessions automatically expire after 30 minutes of inactivity.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
         <div class="card shadow">
             <div class="card-body p-5">
                 <div class="text-center mb-4">
@@ -44,7 +51,7 @@
         
         <div class="text-center mt-3">
             <p class="text-muted">
-                Version: v2.1.1.8<br>
+                Version: <span class="version-badge">v{{ config.version }}</span><br>
                 Developed by MintFire
             </p>
         </div>

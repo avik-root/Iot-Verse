@@ -2,7 +2,7 @@ import os
 import json
 import csv
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from werkzeug.utils import secure_filename
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory
@@ -25,6 +25,13 @@ app.config['UPLOAD_FOLDER'] = 'uploads/product_images'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 
+# Session configuration for automatic timeout
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)  # 30 minutes
+app.config['SESSION_REFRESH_EACH_REQUEST'] = True  # Refresh session on each request
+app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent JavaScript access to session cookie
+app.config['SESSION_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # CSRF protection
+
 # Ensure directories exist
 os.makedirs('data', exist_ok=True)
 os.makedirs('uploads/product_images', exist_ok=True)
@@ -37,11 +44,35 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'admin_login'
 
+# Session timeout handler
+@app.before_request
+def before_request():
+    """Make session permanent and check for session timeout"""
+    from flask import session
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(minutes=30)
+
+# Handle session timeout
+@login_manager.unauthorized_handler
+def unauthorized():
+    """Handle unauthorized access with session timeout message"""
+    flash('Your session has expired. Please log in again.', 'warning')
+    return redirect(url_for('admin_login'))
+
 # Context processor to make config available to all templates
 @app.context_processor
 def inject_config():
     """Make config available to all templates"""
     return {'config': load_volta_config()}
+
+# Context processor for currency data
+@app.context_processor
+def inject_currencies():
+    """Make currencies and symbols available to all templates"""
+    return {
+        'currencies': list(EXCHANGE_RATES.keys()),
+        'symbols': CURRENCY_SYMBOLS
+    }
 
 # User class for admin
 class AdminUser(UserMixin):
@@ -211,6 +242,8 @@ def load_volta_config():
         # Create default config
         default_config = {
             'enabled': False,  # Disabled by default until admin enables it
+            'version': '2.1.0.0',  # Default version
+            'maintenance_mode': False,
             'system_prompt': """You are Volta, an intelligent IoT assistant specialized in IoT devices, Internet of Things, 
 Artificial Intelligence (AI), Machine Learning (ML), Cyber Security, and Computer Science Engineering (CSE) topics.
 
@@ -555,8 +588,7 @@ def home():
     types = sorted(list(set(p.get('type', '') for p in products if p.get('type'))))
     # Calculate total inventory value
     total_value = sum(p['price'] * p['quantity'] for p in products)
-    return render_template('home.html', products=products, types=types, total_value=total_value, 
-                         currencies=list(EXCHANGE_RATES.keys()), symbols=CURRENCY_SYMBOLS)
+    return render_template('home.html', products=products, types=types, total_value=total_value)
 
 @app.route('/product/<product_id>')
 def product_detail(product_id):
@@ -587,9 +619,7 @@ def product_detail(product_id):
                          product=product, 
                          price_graph=price_graph,
                          price_history=product_history,
-                         average_price=average_price,
-                         currencies=list(EXCHANGE_RATES.keys()),
-                         symbols=CURRENCY_SYMBOLS)
+                         average_price=average_price)
 
 @app.route('/search')
 def search():
@@ -1320,7 +1350,7 @@ body {
     main_js = """// main.js - Main JavaScript for IoT Verse
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('IoT Verse - v2.1.1.8 - Developed by MintFire');
+    console.log('IoT Verse - Developed by MintFire');
     
     // Initialize tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
