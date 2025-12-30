@@ -297,6 +297,107 @@
 
         <hr>
 
+        <!-- ASCII Art Color Customization -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h6 class="mb-3"><i class="bi bi-palette"></i> ASCII Art Color Customization</h6>
+                <p class="text-muted mb-3">
+                    Customize the colors of Volta's ASCII art for light and dark modes. The colors will automatically apply based on the user's theme preference.
+                </p>
+                
+                <form method="POST" action="{{ url_for('volta_settings') }}" class="mb-3">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="ascii_art_light_color" class="form-label">
+                                <i class="bi bi-sun"></i> Light Mode Color
+                            </label>
+                            <div class="input-group">
+                                <input type="color" 
+                                       class="form-control form-control-color" 
+                                       id="ascii_art_light_color" 
+                                       name="ascii_art_light_color" 
+                                       value="{{ config.get('ascii_art_light_color', '#2563eb') }}"
+                                       style="max-width: 60px;">
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="ascii_art_light_color_text" 
+                                       name="ascii_art_light_color_text" 
+                                       value="{{ config.get('ascii_art_light_color', '#2563eb') }}"
+                                       placeholder="#2563eb"
+                                       readonly>
+                            </div>
+                            <small class="form-text text-muted d-block mt-2">
+                                Color used when user is in light mode
+                            </small>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label for="ascii_art_dark_color" class="form-label">
+                                <i class="bi bi-moon"></i> Dark Mode Color
+                            </label>
+                            <div class="input-group">
+                                <input type="color" 
+                                       class="form-control form-control-color" 
+                                       id="ascii_art_dark_color" 
+                                       name="ascii_art_dark_color" 
+                                       value="{{ config.get('ascii_art_dark_color', '#4f9ff0') }}"
+                                       style="max-width: 60px;">
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="ascii_art_dark_color_text" 
+                                       name="ascii_art_dark_color_text" 
+                                       value="{{ config.get('ascii_art_dark_color', '#4f9ff0') }}"
+                                       placeholder="#4f9ff0"
+                                       readonly>
+                            </div>
+                            <small class="form-text text-muted d-block mt-2">
+                                Color used when user is in dark mode
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info mb-3">
+                        <h6 class="alert-heading"><i class="bi bi-info-circle"></i> Preview</h6>
+                        <div class="row">
+                            <div class="col-6">
+                                <p><strong>Light Mode:</strong></p>
+                                <div style="background-color: #f8fafc; padding: 10px; border-radius: 5px; color: {{ config.get('ascii_art_light_color', '#2563eb') }}; font-family: monospace;">
+                                    <pre style="margin: 0;">⠀⠀⠀VOLTA⠀⠀⠀
+⠀⠀AI⠀ASSISTANT⠀⠀</pre>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>Dark Mode:</strong></p>
+                                <div style="background-color: #1a1d2e; padding: 10px; border-radius: 5px; color: {{ config.get('ascii_art_dark_color', '#4f9ff0') }}; font-family: monospace;">
+                                    <pre style="margin: 0;">⠀⠀⠀VOLTA⠀⠀⠀
+⠀⠀AI⠀ASSISTANT⠀⠀</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" name="action" value="update_ascii_colors">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Update ASCII Art Colors
+                    </button>
+                </form>
+            </div>
+            <div class="col-md-4">
+                <div class="alert alert-warning mb-0">
+                    <h6 class="alert-heading"><i class="bi bi-palette"></i> Color Tips</h6>
+                    <ul class="mb-0" style="font-size: 0.9rem;">
+                        <li>Use contrasting colors for visibility</li>
+                        <li>Light mode: Bright/Dark colors recommended</li>
+                        <li>Dark mode: Bright colors recommended</li>
+                        <li>Hex color format: #RRGGBB</li>
+                        <li>Preview updates in real-time</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
         <!-- Reset Configuration -->
         <div class="row">
             <div class="col-md-8">
@@ -476,6 +577,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 apiKeyField.type = 'password';
                 btn.innerHTML = '<i class="bi bi-eye"></i> Show';
             }
+        });
+    }
+    
+    // Sync color picker with text input for light mode
+    const lightColorPicker = document.getElementById('ascii_art_light_color');
+    const lightColorText = document.getElementById('ascii_art_light_color_text');
+    if (lightColorPicker && lightColorText) {
+        lightColorPicker.addEventListener('input', function() {
+            lightColorText.value = this.value;
+        });
+    }
+    
+    // Sync color picker with text input for dark mode
+    const darkColorPicker = document.getElementById('ascii_art_dark_color');
+    const darkColorText = document.getElementById('ascii_art_dark_color_text');
+    if (darkColorPicker && darkColorText) {
+        darkColorPicker.addEventListener('input', function() {
+            darkColorText.value = this.value;
         });
     }
     

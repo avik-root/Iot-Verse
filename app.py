@@ -232,6 +232,11 @@ def get_currency_symbol(currency='INR'):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
+def is_valid_hex_color(color):
+    """Validate if a string is a valid hex color"""
+    import re
+    return bool(re.match(r'^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$', color))
+
 # Volta Chatbot Configuration Functions
 def load_volta_config():
     """Load Volta chatbot configuration"""
@@ -246,6 +251,8 @@ def load_volta_config():
             'maintenance_mode': False,
             'ascii_art_enabled': False,  # ASCII art toggle
             'ascii_art': '⠀⠀⠀⠀⠀⢀⣴⣿⣿⣿⣦⠀\n⠀⠀⠀⠀⣰⣿⡟⢻⣿⡟⢻⣧\n⠀⠀⠀⣰⣿⣿⣇⣸⣿⣇⣸⣿\n⠀⠀⣴⣿⣿⣿⣿⠟⢻⣿⣿⣿\n⣠⣾⣿⣿⣿⣿⣿⣤⣼⣿⣿⠇\n⢿⡿⢿⣿⣿⣿⣿⣿⣿⣿⡿⠀\n⠀⠀⠈⠿⠿⠋⠙⢿⣿⡿⠁⠀',  # Default ASCII art
+            'ascii_art_light_color': '#2563eb',  # Light mode color
+            'ascii_art_dark_color': '#4f9ff0',   # Dark mode color
             'system_prompt': """You are Volta, an intelligent IoT assistant specialized in IoT devices, Internet of Things, 
 Artificial Intelligence (AI), Machine Learning (ML), Cyber Security, and Computer Science Engineering (CSE) topics.
 
@@ -999,7 +1006,7 @@ def reorder_products():
 def chat():
     """Volta chatbot interface - PUBLIC"""
     config = load_volta_config()
-    return render_template('volta_chat.html', chatbot_enabled=config['enabled'])
+    return render_template('volta_chat.html', chatbot_enabled=config['enabled'], config=config)
 
 @app.route('/api/chat', methods=['POST'])
 def api_chat():
@@ -1085,6 +1092,21 @@ def volta_settings():
             save_volta_config(config)
             status = 'enabled' if config['enabled'] else 'disabled'
             flash(f'Volta is now {status}!', 'info')
+        
+        elif action == 'update_ascii_colors':
+            light_color = request.form.get('ascii_art_light_color', '#2563eb').strip()
+            dark_color = request.form.get('ascii_art_dark_color', '#4f9ff0').strip()
+            
+            # Validate hex colors
+            if not is_valid_hex_color(light_color):
+                flash('✗ Invalid light mode color. Please enter a valid hex color.', 'danger')
+            elif not is_valid_hex_color(dark_color):
+                flash('✗ Invalid dark mode color. Please enter a valid hex color.', 'danger')
+            else:
+                config['ascii_art_light_color'] = light_color
+                config['ascii_art_dark_color'] = dark_color
+                save_volta_config(config)
+                flash('✓ ASCII art colors updated successfully!', 'success')
         
         elif action == 'reset_config':
             default_config = load_volta_config()

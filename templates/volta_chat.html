@@ -10,6 +10,14 @@
             <div class="p-4">
                 <div class="card border-0 bg-light">
                     <div class="card-body">
+                        <!-- ASCII Art Display -->
+                        {% if config.ascii_art_enabled %}
+                        <div class="ascii-art-display mb-3" id="asciiArtDisplay">
+                            <pre style="margin: 0; text-align: center; font-size: 0.8rem; line-height: 1.2;">{{ config.ascii_art }}</pre>
+                        </div>
+                        <hr>
+                        {% endif %}
+                        
                         <h5 class="card-title">
                             <i class="bi bi-robot"></i> Volta AI Assistant
                         </h5>
@@ -145,6 +153,29 @@ body {
 
 body.dark-mode {
     background-color: var(--dark-bg);
+}
+
+/* ASCII Art Styling */
+.ascii-art-display {
+    padding: 10px;
+    border-radius: 8px;
+    background: rgba(37, 99, 235, 0.05);
+    border: 2px solid #2563eb;
+}
+
+.ascii-art-display pre {
+    color: {{ config.get('ascii_art_light_color', '#2563eb') }};
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+body.dark-mode .ascii-art-display {
+    background: rgba(79, 159, 240, 0.1);
+    border-color: {{ config.get('ascii_art_dark_color', '#4f9ff0') }};
+}
+
+body.dark-mode .ascii-art-display pre {
+    color: {{ config.get('ascii_art_dark_color', '#4f9ff0') }};
 }
 
 #chatMessages {
@@ -300,6 +331,41 @@ pre code {
 </style>
 
 <script>
+// ASCII Art Color Management
+function updateAsciiArtColor() {
+    const asciiArtDisplay = document.getElementById('asciiArtDisplay');
+    if (!asciiArtDisplay) return;
+    
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    const lightColor = '{{ config.get("ascii_art_light_color", "#2563eb") }}';
+    const darkColor = '{{ config.get("ascii_art_dark_color", "#4f9ff0") }}';
+    
+    const preElement = asciiArtDisplay.querySelector('pre');
+    if (preElement) {
+        preElement.style.color = isDarkMode ? darkColor : lightColor;
+    }
+    
+    // Update border and background
+    if (isDarkMode) {
+        asciiArtDisplay.style.backgroundColor = 'rgba(79, 159, 240, 0.1)';
+        asciiArtDisplay.style.borderColor = darkColor;
+    } else {
+        asciiArtDisplay.style.backgroundColor = 'rgba(37, 99, 235, 0.05)';
+        asciiArtDisplay.style.borderColor = lightColor;
+    }
+}
+
+// Listen for theme changes
+const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+darkModeQuery.addEventListener('change', updateAsciiArtColor);
+
+// Update when page loads
+document.addEventListener('DOMContentLoaded', updateAsciiArtColor);
+
+// Also update when dark mode toggle is manually clicked
+const observer = new MutationObserver(updateAsciiArtColor);
+observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
 const messageInput = document.getElementById('messageInput');
 const sendBtn = document.getElementById('sendBtn');
 const chatMessages = document.getElementById('chatMessages');

@@ -162,16 +162,30 @@
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Dark Mode Script -->
+    <!-- Dark Mode Script with Auto Detection -->
     <script>
-        // Initialize dark mode from localStorage
+        // Initialize dark mode with auto-detection based on device preference
         function initializeDarkMode() {
-            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            // Check if user has manually set a preference
+            const savedMode = localStorage.getItem('darkMode');
+            let shouldBeDark;
+            
+            if (savedMode !== null) {
+                // Use saved preference
+                shouldBeDark = savedMode === 'true';
+            } else {
+                // Auto-detect from device preference
+                shouldBeDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            }
+            
             const toggle = document.getElementById('darkModeToggle');
             
-            if (isDarkMode) {
+            if (shouldBeDark) {
                 document.body.classList.add('dark-mode');
                 if (toggle) toggle.classList.add('active');
+            } else {
+                document.body.classList.remove('dark-mode');
+                if (toggle) toggle.classList.remove('active');
             }
         }
         
@@ -187,7 +201,7 @@
             body.classList.toggle('dark-mode');
             if (toggle) toggle.classList.toggle('active');
             
-            // Save preference
+            // Save preference (manual override)
             const isDarkMode = body.classList.contains('dark-mode');
             localStorage.setItem('darkMode', isDarkMode);
             
@@ -195,10 +209,29 @@
             setTimeout(() => body.classList.remove('transition-theme'), 300);
         }
         
+        // Listen for system theme changes
+        const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        darkModeQuery.addEventListener('change', (e) => {
+            // Only apply system preference if user hasn't manually set one
+            if (localStorage.getItem('darkMode') === null) {
+                const shouldBeDark = e.matches;
+                const body = document.body;
+                const toggle = document.getElementById('darkModeToggle');
+                
+                if (shouldBeDark) {
+                    body.classList.add('dark-mode');
+                    if (toggle) toggle.classList.add('active');
+                } else {
+                    body.classList.remove('dark-mode');
+                    if (toggle) toggle.classList.remove('active');
+                }
+            }
+        });
+        
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', initializeDarkMode);
         
-        // Also initialize immediately for faster application
+        // Also initialize immediately for faster application (before page renders)
         initializeDarkMode();
     </script>
     
