@@ -237,13 +237,13 @@
         "id": "4d4ab73f-30d5-41b8-8866-060b154866da",
         "name": "SOLAR PANEL 69X66",
         "price": 60.0,
-        "quantity": 10,
+        "quantity": 6,
         "availability": "In Stock",
         "type": "PANEL 5V",
         "description": "A solar panel of this size (69x66) and rating (5V) is used to convert sunlight into electrical energy, typically for charging batteries or powering low-power 5V electronic devices in outdoor or remote IoT applications.",
         "image": "4d4ab73f-30d5-41b8-8866-060b154866da_69.jpg",
         "created_at": "2025-12-28T01:20:22.256207",
-        "last_updated": "2025-12-29T15:57:48.976990",
+        "last_updated": "2026-01-07T00:16:07.102521",
         "index": 18
     },
     {
@@ -328,13 +328,13 @@
         "id": "a545c2ff-f189-4758-9660-9bed30d4ed89",
         "name": "PCB BOARD 7X9",
         "price": 20.0,
-        "quantity": 4,
+        "quantity": 3,
         "availability": "In Stock",
         "type": "PCB BOARD",
         "description": "A Printed Circuit Board (PCB) 7x9 is a physical board used to mechanically support and electrically connect electronic components using conductive pathways, tracks, or signal traces etched from copper sheets laminated onto a non-conductive substrate. The 7x9 likely refers to the size in units, often used for prototyping and permanent circuit assembly.",
         "image": "a545c2ff-f189-4758-9660-9bed30d4ed89_7x9cm-pcb-board-2-550x550.jpg",
         "created_at": "2025-12-28T01:20:22.256355",
-        "last_updated": "2025-12-28T03:33:35.563317",
+        "last_updated": "2026-01-07T00:17:33.391834",
         "index": 25
     },
     {
@@ -432,13 +432,13 @@
         "id": "864dde24-758c-4810-8fd9-f45c5d7229aa",
         "name": "PIR SENSOR",
         "price": 30.0,
-        "quantity": 3,
+        "quantity": 2,
         "availability": "In Stock",
         "type": "MOTION SENSOR",
         "description": "A Passive Infrared (PIR) sensor detects motion by measuring infrared light radiating from objects, typically used to sense whether a human has moved in or out of the sensor's range. It is commonly used in security alarms and automatic lighting.",
         "image": "864dde24-758c-4810-8fd9-f45c5d7229aa_pir.jpg",
         "created_at": "2025-12-28T01:20:22.256622",
-        "last_updated": "2025-12-28T03:42:29.207927",
+        "last_updated": "2026-01-07T00:17:55.458123",
         "index": 33
     },
     {
@@ -575,13 +575,13 @@
         "id": "36c2162f-d269-4425-88c5-85e49b5a4b4b",
         "name": "5V RELAY",
         "price": 30.0,
-        "quantity": 5,
+        "quantity": 4,
         "availability": "In Stock",
         "type": "RELAY",
         "description": "A 5V relay is an electronic switch designed to operate with a 5V DC working voltage. It is used to control the flow of current in a circuit, allowing a low-power signal (from a microcontroller like Arduino or Raspberry Pi) to switch on or off a higher-power load, such as lights, appliances, or motors, in home automation, automotive electronics, and IoT projects.",
         "image": "36c2162f-d269-4425-88c5-85e49b5a4b4b_relay1-1024x1024.jpg",
         "created_at": "2025-12-28T01:20:22.256840",
-        "last_updated": "2025-12-28T16:09:51.559186",
+        "last_updated": "2026-01-07T00:16:18.448565",
         "index": 44
     },
     {
@@ -603,11 +603,11 @@
         "price": 10.0,
         "quantity": 2,
         "availability": "In Stock",
-        "type": "5V BUCK CONVERTER",
+        "type": "BUCK CONVERTER",
         "description": "The MP1584 DC-DC module is a high-frequency step-down switching regulator (buck converter) that efficiently converts a higher input voltage (4.5V to 28V) into a lower output voltage (down to 0.8V, often configured for 5V in these modules). It is used to provide stable, regulated power to other components in an IoT or electronics project, particularly where high efficiency is required.",
         "image": "3d2903bc-aff4-40d1-a10e-1535a3361e1a_1584.jpg",
         "created_at": "2025-12-28T01:20:22.256877",
-        "last_updated": "2025-12-28T16:10:23.916354",
+        "last_updated": "2026-01-07T00:24:12.963218",
         "index": 46
     },
     {
@@ -718,13 +718,13 @@
         "id": "1b717f73-884f-4769-bd4e-bb6bd61cf58a",
         "name": "TP4056 CHARGING MODULE",
         "price": 20.0,
-        "quantity": 10,
+        "quantity": 9,
         "availability": "In Stock",
         "type": "CHARGING MODULE",
         "description": "Used for charging rechargeable lithium batteries using the constant-current/constant-voltage (CC/CV) method and provides necessary protection for lithium batteries.",
         "image": "1b717f73-884f-4769-bd4e-bb6bd61cf58a_tp4056.png",
         "created_at": "2025-12-28T01:20:22.257043",
-        "last_updated": "2025-12-28T16:15:02.604965",
+        "last_updated": "2026-01-07T00:17:45.050191",
         "index": 55
     },
     {
@@ -770,26 +770,26 @@
         "id": "75109112-fa00-453f-b09a-bfd27b03606b",
         "name": "GREEN LED",
         "price": 5.0,
-        "quantity": 5,
+        "quantity": 4,
         "availability": "In Stock",
         "type": "LED ",
         "description": "Emits green light; commonly used as a visual indicator or for low-power illumination in various electronic projects and circuits.",
         "image": "75109112-fa00-453f-b09a-bfd27b03606b_grnled.jpg",
         "created_at": "2025-12-28T01:20:22.257117",
-        "last_updated": "2025-12-29T17:12:49.871248",
+        "last_updated": "2026-01-07T00:16:41.919816",
         "index": 59
     },
     {
         "id": "2c72ea76-c5c4-4f2c-9ec7-0f86585c5e5b",
         "name": "YELLOW LED",
         "price": 5.0,
-        "quantity": 5,
+        "quantity": 4,
         "availability": "In Stock",
         "type": "LED ",
         "description": "A yellow LED (Light Emitting Diode) is a semiconductor light source that emits light when current flows through it. In IoT applications, LEDs are commonly used as indicators for status, alerts, or simple illumination.",
         "image": "2c72ea76-c5c4-4f2c-9ec7-0f86585c5e5b_yewled.png",
         "created_at": "2025-12-28T01:20:22.257135",
-        "last_updated": "2025-12-29T17:12:29.717364",
+        "last_updated": "2026-01-07T00:16:54.769746",
         "index": 60
     },
     {
@@ -848,13 +848,13 @@
         "id": "44a8317c-8531-46fc-bc2a-421487c7bcea",
         "name": "3M Wire ",
         "price": 10.0,
-        "quantity": 15,
+        "quantity": 4,
         "availability": "In Stock",
         "type": "WIRES",
         "description": "A 3-meter wire serves as a basic electrical conductor to connect components in an IoT project. It is used for power, ground, and signal connections.",
         "image": "default.jpg",
         "created_at": "2025-12-28T01:20:22.257227",
-        "last_updated": "2025-12-28T20:16:44.480207",
+        "last_updated": "2026-01-07T00:17:19.540846",
         "index": 65
     },
     {
@@ -926,13 +926,13 @@
         "id": "c596bbd2-8fa4-4966-83d5-c6e9e14dffb8",
         "name": "6MM LDR SENSOR",
         "price": 10.0,
-        "quantity": 5,
+        "quantity": 4,
         "availability": "In Stock",
         "type": "LDR SENSOR",
         "description": "A 6MM LDR (Light Dependent Resistor) sensor changes its resistance based on the intensity of light falling on it, which allows it to be used for detecting light levels or presence.",
         "image": "c596bbd2-8fa4-4966-83d5-c6e9e14dffb8_LDR.jpg",
         "created_at": "2025-12-28T01:20:22.257337",
-        "last_updated": "2025-12-28T16:26:27.032942",
+        "last_updated": "2026-01-07T00:18:23.510540",
         "index": 71
     },
     {
@@ -1259,5 +1259,31 @@
         "created_at": "2025-12-28T01:20:22.257802",
         "last_updated": "2026-01-04T22:18:00.980884",
         "index": 96
+    },
+    {
+        "id": "fa1756db-dba8-469e-905c-fdb56d509015",
+        "name": "4 Volt Led Light 8W",
+        "price": 42.0,
+        "quantity": 8,
+        "availability": "In Stock",
+        "type": "LED",
+        "description": "4 Volt 8 Watt Bright SMD LED Bead Chips Bulb Light Lamp Multipurpose Use For Home, Temple Decoration DIY Projects, Hobby Kit (COOL WHITE)",
+        "image": "fa1756db-dba8-469e-905c-fdb56d509015_4vled.jpg",
+        "index": 97,
+        "created_at": "2026-01-07T00:22:05.722375",
+        "last_updated": "2026-01-07T00:22:05.722395"
+    },
+    {
+        "id": "246345bf-b9ad-41ad-a9a4-1fcd473d3060",
+        "name": "1.5V 1.8V 2.5V 3V 3.3V 3.7V 4.2V to 5V DC-DC DC Boost Converter Module Step Up Board",
+        "price": 50.0,
+        "quantity": 4,
+        "availability": "In Stock",
+        "type": "BUCK CONVERTER",
+        "description": "This is the voltage boost converter module provides 5V DC stable voltage output at various input range between 1.5V to 5V. This small tiny circuit boosts the voltage level and provides the amplified stabilized 5V output. For the different input range, it consumes a different amount of current to produce a balanced output.",
+        "image": "246345bf-b9ad-41ad-a9a4-1fcd473d3060_5v.jpeg",
+        "index": 98,
+        "created_at": "2026-01-07T00:25:59.791988",
+        "last_updated": "2026-01-07T00:25:59.792012"
     }
 ]
