@@ -263,13 +263,13 @@
         "id": "8f86981d-f23a-41c2-b20c-93fad45256f5",
         "name": "18560 LI-ION BATTERY",
         "price": 40.0,
-        "quantity": 12,
+        "quantity": 8,
         "availability": "In Stock",
         "type": "3.9V BATTERY",
         "description": "A rechargeable lithium-ion battery cell that provides electrical energy. It is commonly used in applications requiring high energy density, long life, and lightweight batteries, such as laptops, power tools, electric vehicles, and drones.",
         "image": "8f86981d-f23a-41c2-b20c-93fad45256f5_1850.jpg",
         "created_at": "2025-12-28T01:20:22.256262",
-        "last_updated": "2025-12-28T03:32:04.298795",
+        "last_updated": "2026-01-07T14:58:46.513847",
         "index": 20
     },
     {
