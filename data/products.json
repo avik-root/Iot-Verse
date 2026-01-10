@@ -1285,5 +1285,18 @@
         "index": 98,
         "created_at": "2026-01-07T00:25:59.791988",
         "last_updated": "2026-01-07T00:25:59.792012"
+    },
+    {
+        "id": "d5473f12-9856-40c0-8be2-a7853daa1ede",
+        "name": "Diode 1N4007",
+        "price": 20.0,
+        "quantity": 10,
+        "availability": "In Stock",
+        "type": "DIODE",
+        "description": "The 1N4007 is a widely used, inexpensive general-purpose silicon rectifier diode designed for converting alternating current (AC) to direct current (DC). It can handle a continuous forward current of up to 1 ampere and has a high peak inverse voltage (PIV) rating of 1,000 volts. ",
+        "image": "d5473f12-9856-40c0-8be2-a7853daa1ede_electronic-diode-1024x1024.jpg",
+        "index": 99,
+        "created_at": "2026-01-10T20:42:37.560969",
+        "last_updated": "2026-01-10T20:42:37.560981"
     }
 ]
