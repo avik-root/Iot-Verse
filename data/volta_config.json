@@ -1,5 +1,5 @@
 {
-    "enabled": false,
+    "enabled": true,
     "maintenance_mode": false,
     "version": "2.9.1.1",
     "ascii_art_enabled": true,
