@@ -431,14 +431,14 @@
     {
         "id": "864dde24-758c-4810-8fd9-f45c5d7229aa",
         "name": "PIR SENSOR",
-        "price": 30.0,
+        "price": 50.0,
         "quantity": 2,
         "availability": "In Stock",
         "type": "MOTION SENSOR",
         "description": "A Passive Infrared (PIR) sensor detects motion by measuring infrared light radiating from objects, typically used to sense whether a human has moved in or out of the sensor's range. It is commonly used in security alarms and automatic lighting.",
         "image": "864dde24-758c-4810-8fd9-f45c5d7229aa_pir.jpg",
         "created_at": "2025-12-28T01:20:22.256622",
-        "last_updated": "2026-01-07T00:17:55.458123",
+        "last_updated": "2026-02-07T15:42:18.839780",
         "index": 33
     },
     {
@@ -1131,6 +1131,19 @@
         "index": 86
     },
     {
+        "id": "61219154-2a79-4294-ae1f-2a5c9849a410",
+        "name": "Raspberry Pi Active Cooler for Raspberry Pi 5, Active cooler, For heavy load, Without case (SC1148)",
+        "price": 680.0,
+        "quantity": 1,
+        "availability": "Out of Stock",
+        "type": "Cooler ",
+        "description": "Active cooler designed specifically for Raspberry Pi 5 to deliver efficient cooling under heavy workloads. Features a high-performance fan and heatsink combination to maintain optimal temperatures and stable performance. Ideal for high-load applications, supplied without a case (Model: SC1148).",
+        "image": "61219154-2a79-4294-ae1f-2a5c9849a410_IMG-6448-1.jpg",
+        "index": 87,
+        "created_at": "2026-02-08T02:38:16.349904",
+        "last_updated": "2026-02-08T02:38:16.349929"
+    },
+    {
         "id": "083819ba-fe3a-4d34-9aa5-6932b0a0933e",
         "name": "12V 1A POWER ADAPTER",
         "price": 60.0,
@@ -1141,7 +1154,7 @@
         "image": "083819ba-fe3a-4d34-9aa5-6932b0a0933e_12vstrip.png",
         "created_at": "2025-12-28T01:20:22.257615",
         "last_updated": "2026-01-04T22:21:32.998851",
-        "index": 87
+        "index": 88
     },
     {
         "id": "ad4a4c64-9271-40d9-a48e-1b1b2cc854d7",
@@ -1154,7 +1167,7 @@
         "image": "ad4a4c64-9271-40d9-a48e-1b1b2cc854d7_wb2812.jpg",
         "created_at": "2025-12-28T01:20:22.257636",
         "last_updated": "2025-12-28T17:08:00.751435",
-        "index": 88
+        "index": 89
     },
     {
         "id": "1df9f3b5-7699-4ef8-a5fa-917ba6006f83",
@@ -1167,7 +1180,7 @@
         "image": "1df9f3b5-7699-4ef8-a5fa-917ba6006f83_12vstrip.jpg",
         "created_at": "2025-12-28T01:20:22.257655",
         "last_updated": "2025-12-28T17:08:13.021582",
-        "index": 89
+        "index": 90
     },
     {
         "id": "0ccc2c66-7a9d-4851-8902-8f511916d687",
@@ -1180,7 +1193,7 @@
         "image": "0ccc2c66-7a9d-4851-8902-8f511916d687_12v1a_both_pin.png",
         "created_at": "2025-12-28T01:20:22.257673",
         "last_updated": "2025-12-29T14:06:27.625546",
-        "index": 90
+        "index": 91
     },
     {
         "id": "e661291c-e677-40b0-b199-c8509722d289",
@@ -1193,7 +1206,7 @@
         "image": "e661291c-e677-40b0-b199-c8509722d289_push.jpg",
         "created_at": "2025-12-28T01:20:22.257691",
         "last_updated": "2025-12-28T17:08:32.711808",
-        "index": 91
+        "index": 92
     },
     {
         "id": "21d6efa9-7402-4170-b465-a5ec531ad0d1",
@@ -1206,7 +1219,7 @@
         "image": "21d6efa9-7402-4170-b465-a5ec531ad0d1_slide_switch.jpg",
         "created_at": "2025-12-28T01:20:22.257727",
         "last_updated": "2025-12-28T17:14:05.157263",
-        "index": 92
+        "index": 93
     },
     {
         "id": "184d559c-c4b9-499a-8dc5-d9a69eecf192",
@@ -1219,7 +1232,7 @@
         "image": "184d559c-c4b9-499a-8dc5-d9a69eecf192_female_iot.png",
         "created_at": "2025-12-28T01:20:22.257746",
         "last_updated": "2025-12-28T17:14:35.272829",
-        "index": 93
+        "index": 94
     },
     {
         "id": "314dfa55-0af4-4c68-b437-7c3f59f08c3c",
@@ -1232,7 +1245,7 @@
         "image": "314dfa55-0af4-4c68-b437-7c3f59f08c3c_maletomaleiot.jpg",
         "created_at": "2025-12-28T01:20:22.257765",
         "last_updated": "2025-12-28T17:14:47.730383",
-        "index": 94
+        "index": 95
     },
     {
         "id": "81d344d3-1d23-4799-b3c3-a5526d3bd710",
@@ -1245,7 +1258,7 @@
         "image": "81d344d3-1d23-4799-b3c3-a5526d3bd710_micro-hdmi-cable-for-raspberrypi-550x550w.jpg",
         "created_at": "2025-12-28T01:20:22.257783",
         "last_updated": "2025-12-29T17:32:18.100316",
-        "index": 95
+        "index": 96
     },
     {
         "id": "99e76799-0197-4535-b7ec-2c8018bd04b4",
@@ -1258,7 +1271,7 @@
         "image": "99e76799-0197-4535-b7ec-2c8018bd04b4_12vfemalesocket.png",
         "created_at": "2025-12-28T01:20:22.257802",
         "last_updated": "2026-01-04T22:18:00.980884",
-        "index": 96
+        "index": 97
     },
     {
         "id": "fa1756db-dba8-469e-905c-fdb56d509015",
@@ -1269,7 +1282,7 @@
         "type": "LED",
         "description": "4 Volt 8 Watt Bright SMD LED Bead Chips Bulb Light Lamp Multipurpose Use For Home, Temple Decoration DIY Projects, Hobby Kit (COOL WHITE)",
         "image": "fa1756db-dba8-469e-905c-fdb56d509015_4vled.jpg",
-        "index": 97,
+        "index": 98,
         "created_at": "2026-01-07T00:22:05.722375",
         "last_updated": "2026-01-07T00:22:05.722395"
     },
@@ -1282,7 +1295,7 @@
         "type": "BUCK CONVERTER",
         "description": "This is the voltage boost converter module provides 5V DC stable voltage output at various input range between 1.5V to 5V. This small tiny circuit boosts the voltage level and provides the amplified stabilized 5V output. For the different input range, it consumes a different amount of current to produce a balanced output.",
         "image": "246345bf-b9ad-41ad-a9a4-1fcd473d3060_5v.jpeg",
-        "index": 98,
+        "index": 99,
         "created_at": "2026-01-07T00:25:59.791988",
         "last_updated": "2026-01-07T00:25:59.792012"
     },
@@ -1295,8 +1308,86 @@
         "type": "DIODE",
         "description": "The 1N4007 is a widely used, inexpensive general-purpose silicon rectifier diode designed for converting alternating current (AC) to direct current (DC). It can handle a continuous forward current of up to 1 ampere and has a high peak inverse voltage (PIV) rating of 1,000 volts. ",
         "image": "d5473f12-9856-40c0-8be2-a7853daa1ede_electronic-diode-1024x1024.jpg",
-        "index": 99,
+        "index": 100,
         "created_at": "2026-01-10T20:42:37.560969",
         "last_updated": "2026-01-10T20:42:37.560981"
+    },
+    {
+        "id": "f50662c8-af66-4230-b62a-9590c1467f8c",
+        "name": "5 volt relay",
+        "price": 50.0,
+        "quantity": 8,
+        "availability": "In Stock",
+        "type": "Relay",
+        "description": "5VDC-SL-C power relay, which is a common single-pole, double-throw (SPDT) relay used for switching both AC and DC circuits.",
+        "image": "f50662c8-af66-4230-b62a-9590c1467f8c_Relay-600x600.jpg",
+        "index": 101,
+        "created_at": "2026-02-08T00:09:13.807728",
+        "last_updated": "2026-02-08T00:09:13.807738"
+    },
+    {
+        "id": "dbe25e83-0b55-47ac-af04-d8537472d21f",
+        "name": "Dual USB 5V 1A 2.1A Mobile Power Bank 18650 Battery Charger PCB Module Board",
+        "price": 210.0,
+        "quantity": 2,
+        "availability": "In Stock",
+        "type": "Power Bank",
+        "description": "DIY mobile power module circuit board designed for 18650 lithium-ion batteries. Features built-in overcharge, over-discharge, and overcurrent protection with stable 5V dual USB output (2.1A/1A). Includes intelligent digital charging display and automatic charge cutoff for device safety. Ideal for custom power bank projects (basic electronics knowledge required).",
+        "image": "dbe25e83-0b55-47ac-af04-d8537472d21f_71KTqWXESLL.jpg",
+        "index": 102,
+        "created_at": "2026-02-08T02:07:48.047026",
+        "last_updated": "2026-02-08T02:07:48.047036"
+    },
+    {
+        "id": "51ab6277-903d-4b05-8a16-09c702604a0a",
+        "name": "ART IFACT 10 Meters Brass Wire - 18 Gauge (1.219 mm Diameter) ",
+        "price": 325.0,
+        "quantity": 1,
+        "availability": "In Stock",
+        "type": "Wire",
+        "description": "Golden Wire for Jewellery - DIY Jewellery & Artistic - Imitation Jewellery Part",
+        "image": "51ab6277-903d-4b05-8a16-09c702604a0a_brass-rod-strip-flat-sheet.jpg",
+        "index": 103,
+        "created_at": "2026-02-08T02:28:48.748415",
+        "last_updated": "2026-02-08T02:39:21.514457"
+    },
+    {
+        "id": "da62129f-0286-4ec9-bd92-655518782ff0",
+        "name": "4x4 Keyboard",
+        "price": 40.0,
+        "quantity": 1,
+        "availability": "In Stock",
+        "type": "Keyboard",
+        "description": "A 4x4 keypad module is a 16-button input device, often with a\r\nflexible membrane design, used in microcontroller-based projects like security systems and menu navigation, and requires only 8 I/O pins for interfacing due to its matrix configuration. ",
+        "image": "da62129f-0286-4ec9-bd92-655518782ff0_4x4.jpg",
+        "index": 104,
+        "created_at": "2026-02-08T02:47:56.644673",
+        "last_updated": "2026-02-08T02:47:56.644690"
+    },
+    {
+        "id": "a3690fb2-cc7b-4a5a-9fe2-dfe43b9ef407",
+        "name": "Laser Sensor Module 650nm",
+        "price": 30.0,
+        "quantity": 2,
+        "availability": "In Stock",
+        "type": "Laser",
+        "description": "The LASER MODULE 650NM 5V head is composed of a light-emitting tube, condenser lens, and adjustable copper sleeve and it is assembled when delivered, the focal length of the lens is adjusted glued by strong glue stick, which can work directly after connecting to a 5V DC power supply.",
+        "image": "a3690fb2-cc7b-4a5a-9fe2-dfe43b9ef407_laser.jpg",
+        "index": 105,
+        "created_at": "2026-02-08T02:51:53.277141",
+        "last_updated": "2026-02-08T02:51:53.277152"
+    },
+    {
+        "id": "0f88f757-cd16-4ef9-966c-34e1416b47fe",
+        "name": "LED 5mm box kit",
+        "price": 350.0,
+        "quantity": 500,
+        "availability": "In Stock",
+        "type": "Led",
+        "description": "The 500PCS 5mm LED Kit with 5 Colors and Durable Storage box is a great choice for your electronics, DIY projects, and prototyping needs. It includes 500 LEDs in five colours\u2014White, Red, Blue, Yellow, and Green\u2014perfect for use in circuit boards, Arduino projects, and other experiments. Each LED has a voltage range of 2.0-3.4V and uses only 20mA of current, making them energy-efficient and long-lasting.\r\n\r\nThe LED kit comes with a sturdy plastic storage box to keep the LEDs organized and safe from damage. It's ideal for creating light decorations, LED displays, signal indicators, and more. This 5mm LED kit provides a reliable and affordable way to power up your projects with ease.",
+        "image": "0f88f757-cd16-4ef9-966c-34e1416b47fe_1_42b82dcf-7ea1-437f-baad-72db3dc49f12.jpg",
+        "index": 106,
+        "created_at": "2026-02-08T02:55:44.075398",
+        "last_updated": "2026-02-08T02:55:44.075415"
     }
 ]
