@@ -640,3 +640,207 @@ body.dark-mode .breadcrumb-item.active {
         box-shadow: none;
     }
 }
+
+/* ===== DARK MODE COMPREHENSIVE TEXT FIXES ===== */
+body.dark-mode strong,
+body.dark-mode b {
+    color: var(--text-primary);
+}
+
+body.dark-mode label {
+    color: var(--text-primary);
+}
+
+body.dark-mode small {
+    color: var(--text-muted);
+}
+
+body.dark-mode .form-text {
+    color: var(--text-muted);
+}
+
+body.dark-mode .text-dark {
+    color: var(--text-primary) !important;
+}
+
+body.dark-mode .bg-white {
+    background: var(--bg-secondary) !important;
+}
+
+body.dark-mode .bg-dark {
+    background: var(--bg-primary) !important;
+}
+
+/* Dashboard Section Titles */
+body.dark-mode .dashboard-section-title,
+body.dark-mode .section-title {
+    color: var(--text-primary);
+}
+
+body.dark-mode .dashboard-section-title i,
+body.dark-mode .section-title i {
+    color: #818cf8;
+}
+
+/* Stats Card Text */
+body.dark-mode .stats-card h5,
+body.dark-mode .stats-card .card-title,
+body.dark-mode .stat-card h5 {
+    color: white !important;
+}
+
+body.dark-mode .stats-card p,
+body.dark-mode .stats-card .card-text,
+body.dark-mode .stat-card p {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Configuration Cards */
+body.dark-mode .config-card .card-body {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .config-card h5,
+body.dark-mode .config-card h6 {
+    color: var(--text-primary);
+}
+
+/* Border Visibility Improvements */
+body.dark-mode .border-top {
+    border-top-color: var(--border-color) !important;
+}
+
+body.dark-mode .border-bottom {
+    border-bottom-color: var(--border-color) !important;
+}
+
+body.dark-mode .border-start {
+    border-left-color: var(--border-color) !important;
+}
+
+body.dark-mode .border-end {
+    border-right-color: var(--border-color) !important;
+}
+
+/* Table Improvements */
+body.dark-mode .table th,
+body.dark-mode .table td {
+    border-color: var(--border-color) !important;
+}
+
+body.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(129, 140, 248, 0.03);
+}
+
+body.dark-mode .table-bordered {
+    border-color: var(--border-color);
+}
+
+/* Input and Select Improvements */
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+    color: var(--text-primary) !important;
+    background-color: var(--bg-tertiary) !important;
+    border-color: var(--border-color) !important;
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+    color: var(--text-muted) !important;
+}
+
+/* Card Body Text */
+body.dark-mode .card-body {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .card-body h1,
+body.dark-mode .card-body h2,
+body.dark-mode .card-body h3,
+body.dark-mode .card-body h4,
+body.dark-mode .card-body h5,
+body.dark-mode .card-body h6 {
+    color: var(--text-primary);
+}
+
+/* List Items */
+body.dark-mode li {
+    color: var(--text-secondary);
+}
+
+body.dark-mode ul,
+body.dark-mode ol {
+    color: var(--text-secondary);
+}
+
+/* Info Text */
+body.dark-mode .form-check-label,
+body.dark-mode .help-text,
+body.dark-mode .info-text {
+    color: var(--text-secondary);
+}
+
+/* Buttons inside cards */
+body.dark-mode .card .btn-outline-primary {
+    color: #818cf8;
+    border-color: #818cf8;
+}
+
+body.dark-mode .card .btn-outline-secondary {
+    color: var(--text-secondary);
+    border-color: var(--border-color);
+}
+
+/* Nav Tabs */
+body.dark-mode .nav-tabs {
+    border-bottom-color: var(--border-color);
+}
+
+body.dark-mode .nav-tabs .nav-link {
+    color: var(--text-secondary);
+    border-color: transparent;
+}
+
+body.dark-mode .nav-tabs .nav-link:hover {
+    border-color: var(--border-color) var(--border-color) transparent;
+    color: #818cf8;
+}
+
+body.dark-mode .nav-tabs .nav-link.active {
+    background-color: var(--surface);
+    border-color: var(--border-color) var(--border-color) var(--surface);
+    color: #818cf8;
+}
+
+/* Tooltip */
+body.dark-mode .tooltip-inner {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+/* Fix for any remaining dark text */
+body.dark-mode [class*="text-dark"] {
+    color: var(--text-primary) !important;
+}
+
+body.dark-mode .text-body {
+    color: var(--text-primary) !important;
+}
+
+/* Admin Dashboard Specific */
+body.dark-mode .admin-card,
+body.dark-mode .quick-action-card {
+    background: var(--surface);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .quick-action-card h5,
+body.dark-mode .quick-action-card h6 {
+    color: var(--text-primary);
+}
+
+body.dark-mode .quick-action-card p,
+body.dark-mode .quick-action-card span {
+    color: var(--text-secondary);
+}

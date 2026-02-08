@@ -25,7 +25,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/darkmode.css') }}">
 
     <!-- Favicon -->
-    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/png">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/logo.png') }}">
 
     <!-- Inline Critical Header Styles -->
     <style>
@@ -70,41 +71,27 @@
         }
 
         .brand-icon-wrapper {
-            width: 42px;
-            height: 42px;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
-            border-radius: 12px;
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
             position: relative;
-            overflow: hidden;
-        }
-
-        .brand-icon-wrapper::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.3) 50%, transparent 60%);
-            animation: shimmer 3s infinite;
-        }
-
-        @keyframes shimmer {
-            0% {
-                transform: translateX(-100%);
-            }
-
-            100% {
-                transform: translateX(100%);
-            }
         }
 
         .brand-icon-wrapper i {
             font-size: 1.4rem;
-            color: white;
+            color: #6366f1;
             z-index: 1;
+        }
+
+        .brand-logo-img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 8px;
         }
 
         .brand-text {
@@ -472,7 +459,8 @@
                     <!-- Brand -->
                     <a href="{{ url_for('home') }}" class="brand-logo">
                         <div class="brand-icon-wrapper">
-                            <i class="bi bi-lightning-charge-fill"></i>
+                            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="IoT Verse Logo"
+                                class="brand-logo-img">
                         </div>
                         <div class="brand-text">
                             <span class="brand-name">IoT Verse</span>
@@ -522,7 +510,7 @@
                         <!-- Currency Selector -->
                         <div class="dropdown d-none d-lg-block">
                             <button class="currency-btn" type="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-currency-rupee"></i>
+                                <span id="currencyIcon">₹</span>
                                 <span id="currencyDisplay">INR</span>
                                 <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
                             </button>
@@ -530,7 +518,7 @@
                                 {% if currencies %}
                                 {% for currency in currencies %}
                                 <li><a class="dropdown-item" href="#"
-                                        onclick="changeCurrency('{{ currency }}'); return false;">
+                                        onclick="changeCurrency('{{ currency }}', '{{ symbols[currency] }}'); return false;">
                                         <strong>{{ currency }}</strong> <span class="text-muted">({{ symbols[currency]
                                             }})</span>
                                     </a></li>
@@ -622,7 +610,8 @@
                 <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
                     <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-2">
                         <div class="brand-icon-wrapper" style="width: 36px; height: 36px; border-radius: 10px;">
-                            <i class="bi bi-lightning-charge-fill" style="font-size: 1.1rem;"></i>
+                            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="IoT Verse Logo"
+                                class="brand-logo-img" style="width: 28px; height: 28px;">
                         </div>
                         <div>
                             <span class="brand-name" style="font-size: 1.1rem;">IoT Verse</span>
@@ -656,7 +645,7 @@
         window.addEventListener('scroll', () => {
             header.classList.toggle('scrolled', window.scrollY > 20);
         }, { passive: true });
-        
+
         // Mobile menu
         function toggleMobileMenu() {
             const menu = document.getElementById('mobileMenu');
@@ -664,7 +653,7 @@
             menu.classList.toggle('show');
             toggle.classList.toggle('active');
         }
-        
+
         // Close mobile menu on link click
         document.querySelectorAll('.mobile-nav-item').forEach(item => {
             item.addEventListener('click', () => {
@@ -672,14 +661,14 @@
                 document.getElementById('mobileMenuToggle').classList.remove('active');
             });
         });
-        
+
         // Dark mode
         function initializeDarkMode() {
             const savedMode = localStorage.getItem('darkMode');
             const shouldBeDark = savedMode !== null ? savedMode === 'true' : window.matchMedia('(prefers-color-scheme: dark)').matches;
             const toggle = document.getElementById('darkModeToggle');
             const icon = toggle?.querySelector('i');
-            
+
             if (shouldBeDark) {
                 document.body.classList.add('dark-mode');
                 toggle?.classList.add('active');
@@ -690,21 +679,21 @@
                 if (icon) icon.className = 'bi bi-moon-stars-fill';
             }
         }
-        
+
         function toggleDarkMode() {
             const body = document.body;
             const toggle = document.getElementById('darkModeToggle');
             const icon = toggle?.querySelector('i');
-            
+
             body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
             body.classList.toggle('dark-mode');
             toggle?.classList.toggle('active');
-            
+
             const isDarkMode = body.classList.contains('dark-mode');
             localStorage.setItem('darkMode', isDarkMode);
             if (icon) icon.className = isDarkMode ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
         }
-        
+
         // System theme detection
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
             if (localStorage.getItem('darkMode') === null) {
@@ -721,7 +710,7 @@
                 }
             }
         });
-        
+
         // Initialize
         initializeDarkMode();
     </script>
