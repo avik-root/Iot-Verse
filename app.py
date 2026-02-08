@@ -799,6 +799,52 @@ def admin_logout():
     flash('Logged out successfully', 'success')
     return redirect(url_for('home'))
 
+@app.route('/admin/settings', methods=['GET', 'POST'])
+@login_required
+def admin_settings():
+    """Admin settings page for email and password change"""
+    admin_data = load_admin_data()
+    
+    if request.method == 'POST':
+        action = request.form.get('action')
+        
+        if action == 'change_email':
+            new_email = request.form.get('new_email', '').strip()
+            current_password = request.form.get('current_password_email', '')
+            
+            # Verify current password
+            if not bcrypt.check_password_hash(admin_data['password'], current_password):
+                flash('Current password is incorrect!', 'danger')
+            elif not new_email or '@' not in new_email:
+                flash('Please enter a valid email address!', 'danger')
+            else:
+                admin_data['email'] = new_email
+                save_admin_data(admin_data)
+                flash('Email updated successfully! Please login again with your new email.', 'success')
+                logout_user()
+                return redirect(url_for('admin_login'))
+        
+        elif action == 'change_password':
+            current_password = request.form.get('current_password', '')
+            new_password = request.form.get('new_password', '')
+            confirm_password = request.form.get('confirm_password', '')
+            
+            # Verify current password
+            if not bcrypt.check_password_hash(admin_data['password'], current_password):
+                flash('Current password is incorrect!', 'danger')
+            elif len(new_password) < 6:
+                flash('New password must be at least 6 characters!', 'danger')
+            elif new_password != confirm_password:
+                flash('New passwords do not match!', 'danger')
+            else:
+                admin_data['password'] = bcrypt.generate_password_hash(new_password).decode('utf-8')
+                save_admin_data(admin_data)
+                flash('Password updated successfully!', 'success')
+        
+        return redirect(url_for('admin_settings'))
+    
+    return render_template('admin_settings.html', admin_email=admin_data.get('email', ''))
+
 @app.route('/admin/dashboard')
 @login_required
 def admin_dashboard():
@@ -806,15 +852,18 @@ def admin_dashboard():
     # Record daily prices for all products
     record_daily_price(products)
     config = load_volta_config()
+    admin_data = load_admin_data()
     stats = {
         'total_products': len(products),
         'in_stock': sum(1 for p in products if p['availability'] == 'In Stock'),
         'out_of_stock': sum(1 for p in products if p['availability'] == 'Out of Stock'),
         'low_stock': sum(1 for p in products if p['quantity'] < 5 and p['quantity'] > 0),
         'total_value': sum(p['price'] * p['quantity'] for p in products),
+        'total_quantity': sum(p['quantity'] for p in products),  # Total units across all products
         'unique_types': len(set(p.get('type', '') for p in products if p.get('type')))
     }
-    return render_template('admin_dashboard.html', stats=stats, config=config)
+    return render_template('admin_dashboard.html', stats=stats, config=config, admin_email=admin_data.get('email', ''))
+
 
 @app.route('/admin/products')
 @login_required

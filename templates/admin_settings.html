@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Settings - IoT Verse{% endblock %}
+
+{% block extra_css %}
+<style>
+    .settings-card {
+        border-radius: var(--border-radius-lg);
+        border: 1px solid var(--border-color);
+        background: var(--surface);
+        margin-bottom: var(--space-4);
+    }
+
+    .settings-card .card-header {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border-color);
+        padding: var(--space-4) var(--space-5);
+        font-weight: 600;
+    }
+
+    .settings-card .card-body {
+        padding: var(--space-5);
+    }
+
+    .settings-header {
+        margin-bottom: var(--space-6);
+    }
+
+    .settings-header h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        margin-bottom: var(--space-2);
+    }
+
+    .settings-header p {
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .current-email {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-3);
+        background: var(--bg-secondary);
+        border-radius: var(--border-radius);
+        margin-bottom: var(--space-3);
+    }
+
+    .current-email i {
+        color: var(--primary);
+    }
+
+    .password-requirements {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-top: var(--space-2);
+    }
+
+    .password-requirements li {
+        margin-bottom: var(--space-1);
+    }
+
+    body.dark-mode .settings-card {
+        background: var(--surface);
+        border-color: var(--border-color);
+    }
+
+    body.dark-mode .settings-card .card-header {
+        background: var(--bg-tertiary);
+    }
+
+    body.dark-mode .current-email {
+        background: var(--bg-tertiary);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Settings Header -->
+<div class="settings-header">
+    <h1>
+        <i class="bi bi-gear-fill" style="color: var(--primary);"></i>
+        Admin Settings
+    </h1>
+    <p>Manage your admin account credentials</p>
+</div>
+
+<div class="row">
+    <!-- Change Email Card -->
+    <div class="col-lg-6">
+        <div class="settings-card card">
+            <div class="card-header d-flex align-items-center gap-2">
+                <i class="bi bi-envelope-fill text-primary"></i>
+                Change Email Address
+            </div>
+            <div class="card-body">
+                <div class="current-email">
+                    <i class="bi bi-person-circle"></i>
+                    <span>Current: <strong>{{ admin_email }}</strong></span>
+                </div>
+                <form method="POST" action="{{ url_for('admin_settings') }}">
+                    <input type="hidden" name="action" value="change_email">
+                    <div class="mb-3">
+                        <label for="new_email" class="form-label">New Email Address</label>
+                        <input type="email" class="form-control" id="new_email" name="new_email" required
+                            placeholder="Enter new email address">
+                    </div>
+                    <div class="mb-3">
+                        <label for="current_password_email" class="form-label">Current Password</label>
+                        <input type="password" class="form-control" id="current_password_email"
+                            name="current_password_email" required placeholder="Verify with your password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg me-2"></i>Update Email
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Card -->
+    <div class="col-lg-6">
+        <div class="settings-card card">
+            <div class="card-header d-flex align-items-center gap-2">
+                <i class="bi bi-key-fill text-warning"></i>
+                Change Password
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin_settings') }}">
+                    <input type="hidden" name="action" value="change_password">
+                    <div class="mb-3">
+                        <label for="current_password" class="form-label">Current Password</label>
+                        <input type="password" class="form-control" id="current_password" name="current_password"
+                            required placeholder="Enter current password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_password" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="new_password" name="new_password" required
+                            minlength="6" placeholder="Enter new password">
+                        <ul class="password-requirements">
+                            <li>Minimum 6 characters</li>
+                            <li>Mix of letters and numbers recommended</li>
+                        </ul>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password"
+                            required placeholder="Confirm new password">
+                    </div>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-shield-lock me-2"></i>Update Password
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Back to Dashboard -->
+<div class="mt-4">
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+    </a>
+</div>
+{% endblock %}

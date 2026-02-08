@@ -329,8 +329,14 @@
     <a href="{{ url_for('home') }}" class="btn btn-info">
         <i class="bi bi-shop"></i> View Store
     </a>
+    <a href="{{ url_for('volta_settings') }}" class="btn {{ 'btn-danger' if not config.enabled else 'btn-secondary' }}">
+        <i class="bi bi-robot"></i> Volta AI {% if config.enabled %}(Active){% else %}(Sleeping){% endif %}
+    </a>
     <a href="{{ url_for('chat') }}" class="btn btn-secondary">
         <i class="bi bi-chat-dots-fill"></i> Volta Chat
+    </a>
+    <a href="{{ url_for('admin_settings') }}" class="btn btn-dark">
+        <i class="bi bi-gear-fill"></i> Admin Settings
     </a>
     <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#uploadCSVModal">
         <i class="bi bi-upload"></i> Upload CSV
@@ -339,6 +345,7 @@
         <i class="bi bi-box-arrow-right"></i> Logout
     </a>
 </div>
+
 
 <!-- CSV Upload Modal -->
 <div class="modal fade" id="uploadCSVModal" tabindex="-1">
