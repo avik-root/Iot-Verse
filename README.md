@@ -322,8 +322,16 @@ The application will be available at `http://localhost:5000`
 
 ### Environment Variables (.env)
 ```env
-# Google Gemini AI API Key (Required for Volta chatbot)
-GEMINI_API_KEY=your_api_key_here
+# Google Gemini AI API Keys with Automatic Failover
+# You can configure multiple API keys - if one fails, the system automatically tries the next one
+
+# Option 1: Comma-separated keys (recommended)
+GEMINI_API_KEY="key1,key2,key3"
+
+# Option 2: Numbered individual keys (also supported)
+GEMINI_API_KEY_1=your_primary_key
+GEMINI_API_KEY_2=your_backup_key_1
+GEMINI_API_KEY_3=your_backup_key_2
 
 # Flask Configuration
 FLASK_ENV=development          # development or production
@@ -334,11 +342,19 @@ SECRET_KEY=your-secret-key    # Change this in production
 MAX_UPLOAD_SIZE=16777216      # Maximum upload size in bytes (16MB)
 ```
 
+### Multi-API Key Failover
+The system supports automatic failover between multiple Gemini API keys:
+- **Comma-separated keys**: Add multiple keys separated by commas in `GEMINI_API_KEY`
+- **Numbered keys**: Use `GEMINI_API_KEY_1`, `GEMINI_API_KEY_2`, etc.
+- **Automatic failover**: If an API key fails (rate limit, invalid, etc.), the system automatically tries the next key
+- **Logging**: Failed and successful key attempts are logged for debugging
+
 ### Getting Google Gemini API Key
 1. Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
 2. Sign in with your Google account
-3. Create a new API key
-4. Copy the key and add to `.env` file
+3. Create multiple API keys for redundancy
+4. Add keys to `.env` file (comma-separated or numbered)
+
 
 ### Admin Credentials
 First time setup:

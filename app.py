@@ -288,24 +288,91 @@ def save_volta_config(config):
         json.dump(config, f, indent=4)
 
 def get_volta_api_key():
-    """Get Volta API key from .env file or config"""
+    """Get Volta API key from .env file or config - returns first available key"""
+    keys = get_volta_api_keys()
+    return keys[0] if keys else ''
+
+def get_volta_api_keys():
+    """Get all Volta API keys from .env file or config as a list"""
     from dotenv import load_dotenv
     load_dotenv()
     
-    # First check environment variable
-    env_key = os_env.getenv('GEMINI_API_KEY', '').strip()
-    if env_key:
-        return env_key
+    api_keys = []
+    
+    # Check for multiple API keys in environment (comma-separated)
+    env_keys = os_env.getenv('GEMINI_API_KEY', '').strip()
+    if env_keys:
+        # Support comma-separated API keys
+        for key in env_keys.split(','):
+            key = key.strip().strip('"').strip("'")
+            if key:
+                api_keys.append(key)
+    
+    # Also check for numbered API keys (GEMINI_API_KEY_1, GEMINI_API_KEY_2, etc.)
+    for i in range(1, 10):
+        numbered_key = os_env.getenv(f'GEMINI_API_KEY_{i}', '').strip()
+        if numbered_key:
+            numbered_key = numbered_key.strip('"').strip("'")
+            if numbered_key and numbered_key not in api_keys:
+                api_keys.append(numbered_key)
     
     # Then check if saved in volta config
     try:
         config = load_volta_config()
-        if config.get('api_key'):
-            return config['api_key'].strip()
+        config_key = config.get('api_key', '').strip()
+        if config_key and config_key not in api_keys:
+            api_keys.append(config_key)
     except:
         pass
     
-    return ''
+    return api_keys
+
+def call_gemini_with_failover(api_keys, safe_prompt, config):
+    """Try calling Gemini API with multiple keys, failover on failure"""
+    last_error = None
+    
+    for idx, api_key in enumerate(api_keys):
+        try:
+            # Initialize Gemini client with this key
+            client = genai.Client(api_key=api_key)
+            
+            # Send request to Gemini with structured prompt
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=[
+                    {
+                        "role": "user",
+                        "parts": [
+                            {"text": safe_prompt}
+                        ]
+                    }
+                ]
+            )
+            
+            bot_response = response.text
+            
+            # Log which key was used (for debugging)
+            if idx > 0:
+                print(f"[INFO] API Key #{idx + 1} succeeded after {idx} failed attempt(s)")
+            
+            return {
+                'success': True,
+                'response': bot_response,
+                'key_index': idx + 1
+            }
+            
+        except Exception as e:
+            last_error = str(e)
+            print(f"[WARNING] API Key #{idx + 1} failed: {last_error}")
+            # Continue to next key
+            continue
+    
+    # All keys failed
+    return {
+        'success': False,
+        'error': f'All {len(api_keys)} API keys failed. Last error: {last_error}',
+        'key_index': 0
+    }
 
 def save_api_key_to_config(api_key):
     """Save API key to volta config"""
@@ -1155,7 +1222,7 @@ User Message: {user_message}"""
 
 @app.route('/api/chat', methods=['POST'])
 def api_chat():
-    """API endpoint for Volta chatbot - PUBLIC"""
+    """API endpoint for Volta chatbot - PUBLIC with multi-API key failover"""
     try:
         config = load_volta_config()
         
@@ -1183,41 +1250,33 @@ def api_chat():
         # Sanitize user input
         sanitized_message = sanitize_user_input(user_message)
         
-        # Get API key from .env file
-        api_key = get_volta_api_key()
-        if not api_key:
+        # Get all API keys for failover
+        api_keys = get_volta_api_keys()
+        if not api_keys:
             return jsonify({
                 'success': False,
                 'error': 'Volta is sleeping. API key not configured in environment.',
                 'status': 'maintenance'
             }), 503
         
-        # Initialize Gemini client
-        client = genai.Client(api_key=api_key)
-        
         # Build safe prompt with injection protection
         safe_prompt = build_safe_prompt(sanitized_message, config['system_prompt'])
         
-        # Send request to Gemini with structured prompt
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=[
-                {
-                    "role": "user",
-                    "parts": [
-                        {"text": safe_prompt}
-                    ]
-                }
-            ]
-        )
+        # Call Gemini with failover support
+        result = call_gemini_with_failover(api_keys, safe_prompt, config)
         
-        bot_response = response.text
-        
-        return jsonify({
-            'success': True,
-            'response': bot_response,
-            'user_message': user_message
-        })
+        if result['success']:
+            return jsonify({
+                'success': True,
+                'response': result['response'],
+                'user_message': user_message
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': result['error'],
+                'status': 'error'
+            }), 500
     
     except Exception as e:
         print(f"Error in chat: {str(e)}")
