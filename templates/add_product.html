@@ -73,9 +73,15 @@
                         <!-- Image Upload -->
                         <div class="col-12">
                             <label for="image" class="form-label">Product Image</label>
-                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                            <div class="d-flex gap-2">
+                                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                <button type="button" class="btn btn-info" id="analyzeImageBtn" 
+                                        title="Generate description from image">
+                                    <i class="bi bi-magic"></i> AI Analyze
+                                </button>
+                            </div>
                             <div class="form-text">
-                                Upload a clear image of the device (PNG, JPG, JPEG, GIF)
+                                Upload a clear image of the device (PNG, JPG, JPEG, GIF). Click "AI Analyze" to generate a description.
                             </div>
                             
                             {% if product and product.image != 'default.jpg' %}
@@ -118,4 +124,164 @@
         </div>
     </div>
 </div>
+
+<!-- Modal for AI Description Generation -->
+<div class="modal fade" id="aiDescriptionModal" tabindex="-1" aria-labelledby="aiDescriptionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="aiDescriptionLabel">
+                    <i class="bi bi-magic"></i> AI Generated Description
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Loading Spinner -->
+                <div id="loadingSpinner" class="text-center d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Analyzing image...</span>
+                    </div>
+                    <p class="mt-2">Analyzing image with AI... Please wait</p>
+                </div>
+                
+                <!-- Generated Description Display -->
+                <div id="generatedDescriptionContainer" class="d-none">
+                    <div class="alert alert-info mb-3">
+                        <i class="bi bi-info-circle"></i> Review the AI-generated description below and adjust if needed.
+                    </div>
+                    <textarea class="form-control mb-3" id="generatedDescription" rows="8" readonly></textarea>
+                </div>
+                
+                <!-- Error Display -->
+                <div id="errorContainer" class="alert alert-danger d-none" role="alert">
+                    <strong>Error:</strong> <span id="errorMessage"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="useDescriptionBtn" data-bs-dismiss="modal">
+                    <i class="bi bi-check-circle"></i> Use This Description
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const analyzeImageBtn = document.getElementById('analyzeImageBtn');
+    const imageInput = document.getElementById('image');
+    const descriptionInput = document.getElementById('description');
+    const aiModal = new bootstrap.Modal(document.getElementById('aiDescriptionModal'));
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const generatedDescriptionContainer = document.getElementById('generatedDescriptionContainer');
+    const generatedDescriptionText = document.getElementById('generatedDescription');
+    const errorContainer = document.getElementById('errorContainer');
+    const errorMessage = document.getElementById('errorMessage');
+    const useDescriptionBtn = document.getElementById('useDescriptionBtn');
+    
+    // Handle analyze button click
+    analyzeImageBtn.addEventListener('click', function() {
+        // Check if image is selected
+        if (!imageInput.files || imageInput.files.length === 0) {
+            errorContainer.classList.remove('d-none');
+            generatedDescriptionContainer.classList.add('d-none');
+            loadingSpinner.classList.add('d-none');
+            errorMessage.textContent = 'Please select an image first';
+            aiModal.show();
+            return;
+        }
+        
+        const file = imageInput.files[0];
+        
+        // Validate file type
+        const validTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/jpg'];
+        if (!validTypes.includes(file.type)) {
+            errorContainer.classList.remove('d-none');
+            generatedDescriptionContainer.classList.add('d-none');
+            loadingSpinner.classList.add('d-none');
+            errorMessage.textContent = 'Invalid image format. Please upload PNG, JPG, JPEG, or GIF.';
+            aiModal.show();
+            return;
+        }
+        
+        // Validate file size (max 5MB)
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+            errorContainer.classList.remove('d-none');
+            generatedDescriptionContainer.classList.add('d-none');
+            loadingSpinner.classList.add('d-none');
+            errorMessage.textContent = 'Image size is too large. Maximum size is 5MB.';
+            aiModal.show();
+            return;
+        }
+        
+        // Show loading spinner
+        loadingSpinner.classList.remove('d-none');
+        generatedDescriptionContainer.classList.add('d-none');
+        errorContainer.classList.add('d-none');
+        aiModal.show();
+        
+        // Prepare form data
+        const formData = new FormData();
+        formData.append('image', file);
+        
+        // Send request to API
+        fetch('{{ url_for("analyze_device_image") }}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            loadingSpinner.classList.add('d-none');
+            
+            if (data.success) {
+                generatedDescriptionText.value = data.description;
+                generatedDescriptionContainer.classList.remove('d-none');
+                errorContainer.classList.add('d-none');
+            } else {
+                errorContainer.classList.remove('d-none');
+                generatedDescriptionContainer.classList.add('d-none');
+                errorMessage.textContent = data.error || 'Failed to analyze image';
+            }
+        })
+        .catch(error => {
+            loadingSpinner.classList.add('d-none');
+            errorContainer.classList.remove('d-none');
+            generatedDescriptionContainer.classList.add('d-none');
+            errorMessage.textContent = 'Network error: ' + error.message;
+            console.error('Error:', error);
+        });
+    });
+    
+    // Handle use description button
+    useDescriptionBtn.addEventListener('click', function() {
+        const generatedText = generatedDescriptionText.value;
+        if (generatedText) {
+            descriptionInput.value = generatedText;
+            descriptionInput.focus();
+            
+            // Show success notification
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success alert-dismissible fade show';
+            alert.innerHTML = `
+                <i class="bi bi-check-circle"></i> Description pasted successfully. Review and edit as needed.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            descriptionInput.parentElement.insertBefore(alert, descriptionInput);
+            
+            // Auto-remove alert after 5 seconds
+            setTimeout(() => {
+                if (alert.parentElement) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }
+            }, 5000);
+        }
+    });
+});
+</script>
 {% endblock %}

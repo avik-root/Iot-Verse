@@ -1012,6 +1012,86 @@ def reorder_products():
         print(f"Error reordering products: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/analyze-device-image', methods=['POST'])
+@login_required
+def analyze_device_image():
+    """Analyze device image and generate description using Gemini Vision API"""
+    try:
+        # Check if image file is present
+        if 'image' not in request.files:
+            return jsonify({'success': False, 'error': 'No image file provided'}), 400
+        
+        image_file = request.files['image']
+        
+        if image_file.filename == '':
+            return jsonify({'success': False, 'error': 'No image selected'}), 400
+        
+        # Validate file type
+        if not allowed_file(image_file.filename):
+            return jsonify({'success': False, 'error': 'Invalid image format. Allowed: PNG, JPG, JPEG, GIF'}), 400
+        
+        # Get API key
+        api_key = get_volta_api_key()
+        if not api_key:
+            return jsonify({
+                'success': False,
+                'error': 'API key not configured. Please configure Gemini API key in Volta settings.'
+            }), 503
+        
+        # Read image data
+        image_data = image_file.read()
+        
+        # Initialize Gemini client
+        client = genai.Client(api_key=api_key)
+        
+        # Create the prompt for image analysis
+        analysis_prompt = """Analyze this IoT device image and provide a detailed technical description. 
+
+Please include:
+1. Device Type/Name (if identifiable)
+2. Key Components Visible
+3. Likely Function/Purpose
+4. Technical Specifications (if visible)
+5. Use Cases
+6. Notable Features
+
+Format the response as a concise, professional product description suitable for an e-commerce listing.
+Keep it to 150-250 words."""
+        
+        # Send image to Gemini with vision capability
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=[
+                {
+                    "role": "user",
+                    "parts": [
+                        {"text": analysis_prompt},
+                        {
+                            "inline_data": {
+                                "mime_type": f"image/{image_file.filename.rsplit('.', 1)[1].lower()}",
+                                "data": base64.b64encode(image_data).decode('utf-8')
+                            }
+                        }
+                    ]
+                }
+            ]
+        )
+        
+        generated_description = response.text
+        
+        return jsonify({
+            'success': True,
+            'description': generated_description,
+            'message': 'Description generated successfully'
+        })
+    
+    except Exception as e:
+        print(f"Error analyzing image: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': f'Error analyzing image: {str(e)}'
+        }), 500
+
 @app.route('/chat')
 def chat():
     """Volta chatbot interface - PUBLIC"""
@@ -1801,4 +1881,4 @@ if __name__ == '__main__':
     if not os.path.exists('data/admin_password.json'):
         create_default_files()
     
-    app.run(debug=True,host='0.0.0.0', port=5900)
+    app.run(debug=True,host='0.0.0.0', port=5901)

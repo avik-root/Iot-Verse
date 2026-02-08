@@ -1,136 +1,612 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IoT Verse - Modern IoT Device Management System">
+    <meta name="theme-color" content="#6366f1">
     <title>{% block title %}IoT Verse{% endblock %}</title>
-    
+
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <!-- Bootstrap 5 CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/darkmode.css') }}">
-    {% if request.path.startswith('/admin') %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-    {% endif %}
-    
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Favicon and Apple Touch Icons -->
+
+    <!-- Favicon -->
     <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon.ico') }}">
-    <link rel="icon" type="image/png" sizes="64x64" href="{{ url_for('static', filename='images/favicon.ico') }}">
-    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
-    <link rel="apple-touch-icon" sizes="120x120" href="{{ url_for('static', filename='images/apple-touch-icon-120x120.png') }}">
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ url_for('static', filename='images/apple-touch-icon-152x152.png') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/apple-touch-icon-precomposed.png') }}">
-    
+
+    <!-- Inline Critical Header Styles -->
+    <style>
+        /* Premium Header Styles */
+        .header-wrapper {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            will-change: transform;
+        }
+
+        .premium-header {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 100%);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .premium-header.scrolled {
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .premium-header {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.98) 100%);
+            border-bottom: 1px solid rgba(129, 140, 248, 0.15);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Brand Logo */
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .brand-logo:hover {
+            transform: scale(1.02);
+        }
+
+        .brand-icon-wrapper {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-icon-wrapper::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.3) 50%, transparent 60%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .brand-icon-wrapper i {
+            font-size: 1.4rem;
+            color: white;
+            z-index: 1;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .brand-name {
+            font-size: 1.35rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        body.dark-mode .brand-name {
+            background: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .brand-version {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #06b6d4;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Navigation Pills */
+        .nav-pills-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(99, 102, 241, 0.06);
+            padding: 4px;
+            border-radius: 16px;
+        }
+
+        body.dark-mode .nav-pills-wrapper {
+            background: rgba(129, 140, 248, 0.1);
+        }
+
+        .nav-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+        }
+
+        .nav-pill:hover {
+            color: #6366f1;
+            background: rgba(99, 102, 241, 0.08);
+        }
+
+        .nav-pill.active {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+        }
+
+        .nav-pill i {
+            font-size: 1.1rem;
+        }
+
+        body.dark-mode .nav-pill {
+            color: #94a3b8;
+        }
+
+        body.dark-mode .nav-pill:hover {
+            color: #818cf8;
+            background: rgba(129, 140, 248, 0.15);
+        }
+
+        body.dark-mode .nav-pill.active {
+            background: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
+        }
+
+        /* Search Box */
+        .header-search {
+            position: relative;
+            min-width: 260px;
+        }
+
+        .header-search input {
+            width: 100%;
+            padding: 10px 16px 10px 44px;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            background: rgba(99, 102, 241, 0.06);
+            font-size: 0.9rem;
+            color: #1e293b;
+            transition: all 0.25s ease;
+        }
+
+        .header-search input::placeholder {
+            color: #94a3b8;
+        }
+
+        .header-search input:focus {
+            outline: none;
+            background: white;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
+
+        .header-search .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 1rem;
+            pointer-events: none;
+            transition: color 0.25s ease;
+        }
+
+        .header-search input:focus+.search-icon {
+            color: #6366f1;
+        }
+
+        body.dark-mode .header-search input {
+            background: rgba(129, 140, 248, 0.1);
+            color: #f1f5f9;
+        }
+
+        body.dark-mode .header-search input:focus {
+            background: rgba(30, 41, 59, 0.9);
+            border-color: #818cf8;
+            box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.2);
+        }
+
+        body.dark-mode .header-search input:focus+.search-icon {
+            color: #818cf8;
+        }
+
+        /* Action Buttons */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            border: none;
+            background: rgba(99, 102, 241, 0.06);
+            color: #64748b;
+            font-size: 1.15rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+        }
+
+        .action-btn.theme-toggle.active {
+            background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.35);
+        }
+
+        body.dark-mode .action-btn {
+            background: rgba(129, 140, 248, 0.1);
+            color: #94a3b8;
+        }
+
+        body.dark-mode .action-btn:hover {
+            background: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(129, 140, 248, 0.35);
+        }
+
+        /* Currency Dropdown */
+        .currency-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(99, 102, 241, 0.06);
+            color: #64748b;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .currency-btn:hover {
+            background: rgba(99, 102, 241, 0.12);
+            color: #6366f1;
+        }
+
+        body.dark-mode .currency-btn {
+            background: rgba(129, 140, 248, 0.1);
+            color: #94a3b8;
+        }
+
+        body.dark-mode .currency-btn:hover {
+            background: rgba(129, 140, 248, 0.2);
+            color: #818cf8;
+        }
+
+        /* Mobile Menu */
+        .mobile-toggle {
+            display: none;
+            width: 42px;
+            height: 42px;
+            border: none;
+            background: rgba(99, 102, 241, 0.06);
+            border-radius: 12px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .mobile-toggle span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: #64748b;
+            margin: 4px auto;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .mobile-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(4px, 4px);
+        }
+
+        .mobile-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(4px, -4px);
+        }
+
+        body.dark-mode .mobile-toggle {
+            background: rgba(129, 140, 248, 0.1);
+        }
+
+        body.dark-mode .mobile-toggle span {
+            background: #94a3b8;
+        }
+
+        /* Mobile Menu Panel */
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .mobile-menu.show {
+            display: block;
+        }
+
+        body.dark-mode .mobile-menu {
+            background: #1e293b;
+            border-bottom-color: rgba(129, 140, 248, 0.15);
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            color: #475569;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-nav-item:hover,
+        .mobile-nav-item.active {
+            background: rgba(99, 102, 241, 0.1);
+            color: #6366f1;
+        }
+
+        body.dark-mode .mobile-nav-item {
+            color: #cbd5e1;
+        }
+
+        body.dark-mode .mobile-nav-item:hover,
+        body.dark-mode .mobile-nav-item.active {
+            background: rgba(129, 140, 248, 0.15);
+            color: #818cf8;
+        }
+
+        /* Responsive */
+        @media (max-width: 991px) {
+            .mobile-toggle {
+                display: block;
+            }
+
+            .nav-pills-wrapper {
+                display: none;
+            }
+
+            .header-search {
+                display: none;
+            }
+
+            .header-actions .currency-btn {
+                display: none;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .brand-text {
+                display: none;
+            }
+        }
+    </style>
+
     {% block extra_css %}{% endblock %}
 </head>
+
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('home') }}">
-                <img src="{{ url_for('static', filename='images/logo.png') }}" 
-                     alt="IoT Verse Logo" 
-                     height="40" 
-                     class="me-2"
-                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzI1NjNlYiIvPgo8dGV4dCB4PSIyMCIgeT0iMjUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPklvVDwvdGV4dD4KPC9zdmc+'">
-                IoT Verse
-                <span class="version-badge ms-2">v{{ config.version }}</span>
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <!-- Quick Search Bar -->
-                <form class="navbar-search me-lg-3" action="{{ url_for('search') }}" method="get" style="min-width: 300px;">
-                    <div class="input-group input-group-sm">
-                        <input class="form-control form-control-sm" type="text" name="q" placeholder="Search IoT devices..." 
-                               value="{{ request.args.get('q', '') }}" aria-label="Search">
-                        <button class="btn btn-primary btn-sm" type="submit">
-                            <i class="bi bi-search"></i>
-                        </button>
+    <!-- Premium Header -->
+    <header class="header-wrapper">
+        <nav class="premium-header">
+            <div class="container">
+                <div class="d-flex align-items-center justify-content-between py-2">
+                    <!-- Brand -->
+                    <a href="{{ url_for('home') }}" class="brand-logo">
+                        <div class="brand-icon-wrapper">
+                            <i class="bi bi-lightning-charge-fill"></i>
+                        </div>
+                        <div class="brand-text">
+                            <span class="brand-name">IoT Verse</span>
+                            <span class="brand-version">v{{ config.version }}</span>
+                        </div>
+                    </a>
+
+                    <!-- Navigation Pills (Desktop) -->
+                    <div class="nav-pills-wrapper d-none d-lg-flex">
+                        <a href="{{ url_for('home') }}" class="nav-pill {% if request.path == '/' %}active{% endif %}">
+                            <i class="bi bi-house-fill"></i>
+                            <span>Home</span>
+                        </a>
+                        {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('admin_dashboard') }}"
+                            class="nav-pill {% if request.path.startswith('/admin/dashboard') %}active{% endif %}">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="{{ url_for('admin_products') }}"
+                            class="nav-pill {% if request.path.startswith('/admin/products') %}active{% endif %}">
+                            <i class="bi bi-box-seam"></i>
+                            <span>Products</span>
+                        </a>
+                        <a href="{{ url_for('admin_logout') }}" class="nav-pill">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Logout</span>
+                        </a>
+                        {% else %}
+                        <a href="{{ url_for('admin_login') }}"
+                            class="nav-pill {% if request.path == '/admin/login' %}active{% endif %}">
+                            <i class="bi bi-shield-lock-fill"></i>
+                            <span>Admin</span>
+                        </a>
+                        {% endif %}
                     </div>
-                </form>
-                
-                <div class="d-flex flex-row flex-lg-row gap-2 mt-2 mt-lg-0 align-items-center">
-                    <!-- Dark Mode Toggle -->
-                    <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode" onclick="toggleDarkMode()"></button>
-                    
-                    <!-- Currency Selector -->
-                    <div class="dropdown">
-                        <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="currencyDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-cash-coin"></i> <span id="currencyDisplay">INR</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="currencyDropdown">
-                            {% if currencies %}
+
+                    <!-- Search (Desktop) -->
+                    <form class="header-search d-none d-lg-block" action="{{ url_for('search') }}" method="get">
+                        <input type="text" name="q" placeholder="Search IoT devices..."
+                            value="{{ request.args.get('q', '') }}">
+                        <i class="bi bi-search search-icon"></i>
+                    </form>
+
+                    <!-- Actions -->
+                    <div class="header-actions">
+                        <!-- Currency Selector -->
+                        <div class="dropdown d-none d-lg-block">
+                            <button class="currency-btn" type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-currency-rupee"></i>
+                                <span id="currencyDisplay">INR</span>
+                                <i class="bi bi-chevron-down" style="font-size: 0.7rem;"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                {% if currencies %}
                                 {% for currency in currencies %}
-                                <li><a class="dropdown-item" href="#" onclick="changeCurrency('{{ currency }}'); return false;">
-                                    {{ currency }} <span class="text-muted">({{ symbols[currency] }})</span>
-                                </a></li>
+                                <li><a class="dropdown-item" href="#"
+                                        onclick="changeCurrency('{{ currency }}'); return false;">
+                                        <strong>{{ currency }}</strong> <span class="text-muted">({{ symbols[currency]
+                                            }})</span>
+                                    </a></li>
                                 {% endfor %}
-                            {% endif %}
-                        </ul>
+                                {% endif %}
+                            </ul>
+                        </div>
+
+                        <!-- Theme Toggle -->
+                        <button class="action-btn theme-toggle" id="darkModeToggle" title="Toggle Theme"
+                            onclick="toggleDarkMode()">
+                            <i class="bi bi-moon-stars-fill"></i>
+                        </button>
+
+                        <!-- Mobile Menu Toggle -->
+                        <button class="mobile-toggle d-lg-none" id="mobileMenuToggle" onclick="toggleMobileMenu()">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
                     </div>
                 </div>
-                
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{{ url_for('home') }}">
-                            <i class="bi bi-house"></i> Home
-                        </a>
-                    </li>
-                    {% if current_user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path.startswith('/admin/dashboard') %}active{% endif %}" 
-                           href="{{ url_for('admin_dashboard') }}">
-                            <i class="bi bi-speedometer2"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path.startswith('/admin/products') %}active{% endif %}" 
-                           href="{{ url_for('admin_products') }}">
-                            <i class="bi bi-box-seam"></i> Products
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin_logout') }}">
-                            <i class="bi bi-box-arrow-right"></i> Logout
-                        </a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/admin/login' %}active{% endif %}" 
-                           href="{{ url_for('admin_login') }}">
-                            <i class="bi bi-shield-lock"></i> Admin
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
             </div>
-        </div>
-    </nav>
+
+            <!-- Mobile Menu -->
+            <div class="mobile-menu" id="mobileMenu">
+                <form class="header-search mb-3" action="{{ url_for('search') }}" method="get"
+                    style="display: block; min-width: auto;">
+                    <input type="text" name="q" placeholder="Search IoT devices..."
+                        value="{{ request.args.get('q', '') }}" style="width: 100%;">
+                    <i class="bi bi-search search-icon"></i>
+                </form>
+                <a href="{{ url_for('home') }}" class="mobile-nav-item {% if request.path == '/' %}active{% endif %}">
+                    <i class="bi bi-house-fill"></i>
+                    <span>Home</span>
+                </a>
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('admin_dashboard') }}"
+                    class="mobile-nav-item {% if request.path.startswith('/admin/dashboard') %}active{% endif %}">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('admin_products') }}"
+                    class="mobile-nav-item {% if request.path.startswith('/admin/products') %}active{% endif %}">
+                    <i class="bi bi-box-seam"></i>
+                    <span>Products</span>
+                </a>
+                <a href="{{ url_for('admin_logout') }}" class="mobile-nav-item">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Logout</span>
+                </a>
+                {% else %}
+                <a href="{{ url_for('admin_login') }}"
+                    class="mobile-nav-item {% if request.path == '/admin/login' %}active{% endif %}">
+                    <i class="bi bi-shield-lock-fill"></i>
+                    <span>Admin Login</span>
+                </a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
 
     <!-- Flash Messages -->
-    <div class="container mt-3">
+    <div class="container mt-4">
         {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ 'danger' if category == 'error' else category if category in ['success', 'warning', 'info'] else 'success' }} alert-dismissible fade show"
+            role="alert">
+            <i
+                class="bi bi-{% if category == 'error' %}exclamation-triangle-fill{% elif category == 'success' %}check-circle-fill{% elif category == 'warning' %}exclamation-circle-fill{% else %}info-circle-fill{% endif %} me-2"></i>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
         {% endwith %}
     </div>
 
@@ -140,19 +616,27 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer mt-5">
+    <footer class="footer">
         <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5 class="text-white">IoT Verse</h5>
-                    <p class="text-light">Your private IoT device management system <span class="version-badge ms-2">v{{ config.version }}</span></p>
+            <div class="row align-items-center">
+                <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
+                    <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+                        <div class="brand-icon-wrapper" style="width: 36px; height: 36px; border-radius: 10px;">
+                            <i class="bi bi-lightning-charge-fill" style="font-size: 1.1rem;"></i>
+                        </div>
+                        <div>
+                            <span class="brand-name" style="font-size: 1.1rem;">IoT Verse</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6 text-md-end">
-                    <p class="mb-0 text-white">
-                        <i class="bi bi-code-slash"></i> Developed by MintFire
+                <div class="col-md-4 text-center mb-3 mb-md-0">
+                    <p class="mb-0" style="color: #94a3b8; font-size: 0.9rem;">
+                        Modern IoT Device Management System
                     </p>
-                    <p class="text-light mt-2">
-                        &copy; 2025 IoT Verse. All rights reserved.
+                </div>
+                <div class="col-md-4 text-center text-md-end">
+                    <p class="mb-0" style="color: #64748b; font-size: 0.85rem;">
+                        &copy; 2025 <strong style="color: #8b5cf6;">MintFire</strong>
                     </p>
                 </div>
             </div>
@@ -160,81 +644,88 @@
     </footer>
 
     <!-- Bootstrap JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Dark Mode Script with Auto Detection -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Chart.js (Deferred) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+
+    <!-- Header & Theme Scripts -->
     <script>
-        // Initialize dark mode with auto-detection based on device preference
+        // Scroll effect
+        const header = document.querySelector('.premium-header');
+        window.addEventListener('scroll', () => {
+            header.classList.toggle('scrolled', window.scrollY > 20);
+        }, { passive: true });
+        
+        // Mobile menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const toggle = document.getElementById('mobileMenuToggle');
+            menu.classList.toggle('show');
+            toggle.classList.toggle('active');
+        }
+        
+        // Close mobile menu on link click
+        document.querySelectorAll('.mobile-nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.getElementById('mobileMenu').classList.remove('show');
+                document.getElementById('mobileMenuToggle').classList.remove('active');
+            });
+        });
+        
+        // Dark mode
         function initializeDarkMode() {
-            // Check if user has manually set a preference
             const savedMode = localStorage.getItem('darkMode');
-            let shouldBeDark;
-            
-            if (savedMode !== null) {
-                // Use saved preference
-                shouldBeDark = savedMode === 'true';
-            } else {
-                // Auto-detect from device preference
-                shouldBeDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            }
-            
+            const shouldBeDark = savedMode !== null ? savedMode === 'true' : window.matchMedia('(prefers-color-scheme: dark)').matches;
             const toggle = document.getElementById('darkModeToggle');
+            const icon = toggle?.querySelector('i');
             
             if (shouldBeDark) {
                 document.body.classList.add('dark-mode');
-                if (toggle) toggle.classList.add('active');
+                toggle?.classList.add('active');
+                if (icon) icon.className = 'bi bi-sun-fill';
             } else {
                 document.body.classList.remove('dark-mode');
-                if (toggle) toggle.classList.remove('active');
+                toggle?.classList.remove('active');
+                if (icon) icon.className = 'bi bi-moon-stars-fill';
             }
         }
         
-        // Toggle dark mode
         function toggleDarkMode() {
             const body = document.body;
             const toggle = document.getElementById('darkModeToggle');
+            const icon = toggle?.querySelector('i');
             
-            // Add transition class temporarily
-            body.classList.add('transition-theme');
-            
-            // Toggle classes
+            body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
             body.classList.toggle('dark-mode');
-            if (toggle) toggle.classList.toggle('active');
+            toggle?.classList.toggle('active');
             
-            // Save preference (manual override)
             const isDarkMode = body.classList.contains('dark-mode');
             localStorage.setItem('darkMode', isDarkMode);
-            
-            // Remove transition class after animation
-            setTimeout(() => body.classList.remove('transition-theme'), 300);
+            if (icon) icon.className = isDarkMode ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill';
         }
         
-        // Listen for system theme changes
-        const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        darkModeQuery.addEventListener('change', (e) => {
-            // Only apply system preference if user hasn't manually set one
+        // System theme detection
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
             if (localStorage.getItem('darkMode') === null) {
-                const shouldBeDark = e.matches;
-                const body = document.body;
-                const toggle = document.getElementById('darkModeToggle');
-                
-                if (shouldBeDark) {
-                    body.classList.add('dark-mode');
-                    if (toggle) toggle.classList.add('active');
+                if (e.matches) {
+                    document.body.classList.add('dark-mode');
+                    document.getElementById('darkModeToggle')?.classList.add('active');
+                    const icon = document.querySelector('#darkModeToggle i');
+                    if (icon) icon.className = 'bi bi-sun-fill';
                 } else {
-                    body.classList.remove('dark-mode');
-                    if (toggle) toggle.classList.remove('active');
+                    document.body.classList.remove('dark-mode');
+                    document.getElementById('darkModeToggle')?.classList.remove('active');
+                    const icon = document.querySelector('#darkModeToggle i');
+                    if (icon) icon.className = 'bi bi-moon-stars-fill';
                 }
             }
         });
         
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', initializeDarkMode);
-        
-        // Also initialize immediately for faster application (before page renders)
+        // Initialize
         initializeDarkMode();
     </script>
-    
+
     <!-- Custom JS -->
     <script src="{{ url_for('static', filename='js/currency.js') }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
@@ -243,7 +734,8 @@
     <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
     <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
     {% endif %}
-    
+
     {% block extra_js %}{% endblock %}
 </body>
+
 </html>

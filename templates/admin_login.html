@@ -2,55 +2,173 @@
 
 {% block title %}Admin Login - IoT Verse{% endblock %}
 
+{% block extra_css %}
+<style>
+    .login-container {
+        min-height: calc(100vh - 200px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-6) var(--space-4);
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 420px;
+        background: var(--surface-elevated);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: var(--border-radius-xl);
+        box-shadow: var(--shadow-xl);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+    }
+
+    .login-header {
+        background: var(--gradient-primary);
+        padding: var(--space-6);
+        text-align: center;
+        color: white;
+    }
+
+    .login-header i {
+        font-size: 3rem;
+        margin-bottom: var(--space-3);
+        display: block;
+        animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+
+        0%,
+        100% {
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+        }
+
+        50% {
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.5));
+        }
+    }
+
+    .login-header h2 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        margin: 0;
+        color: white;
+    }
+
+    .login-body {
+        padding: var(--space-6);
+    }
+
+    .login-form .form-label {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: var(--space-2);
+    }
+
+    .login-form .form-control {
+        padding: var(--space-4);
+        font-size: 1rem;
+        border-radius: var(--border-radius);
+    }
+
+    .login-form .input-group {
+        position: relative;
+    }
+
+    .login-form .input-icon {
+        position: absolute;
+        left: var(--space-4);
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        z-index: 10;
+    }
+
+    .login-form .form-control.has-icon {
+        padding-left: calc(var(--space-4) * 2 + 1rem);
+    }
+
+    .login-btn {
+        padding: var(--space-4);
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: var(--border-radius);
+        width: 100%;
+        margin-top: var(--space-4);
+    }
+
+    .login-footer {
+        text-align: center;
+        padding: var(--space-4) var(--space-6);
+        background: var(--bg-secondary);
+        border-top: 1px solid var(--border-color);
+    }
+
+    body.dark-mode .login-footer {
+        background: var(--bg-tertiary);
+    }
+
+    .back-home-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+    }
+
+    .back-home-link:hover {
+        color: var(--primary);
+    }
+
+    body.dark-mode .back-home-link:hover {
+        color: #818cf8;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-4">
-        <!-- Session Timeout Info Alert -->
-        <div class="alert alert-info alert-dismissible fade show mb-3" role="alert">
-            <i class="bi bi-clock-history"></i>
-            <strong>Session Timeout:</strong> Admin sessions automatically expire after 30 minutes of inactivity.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <i class="bi bi-shield-lock-fill"></i>
+            <h2>Admin Login</h2>
         </div>
 
-        <div class="card shadow">
-            <div class="card-body p-5">
-                <div class="text-center mb-4">
-                    <img src="{{ url_for('static', filename='images/logo.png') }}" 
-                         alt="IoT Verse Logo" height="60" class="mb-3">
-                    <h2 class="h4">Admin Login</h2>
-                    <p class="text-muted">IoT Verse Management System</p>
+        <div class="login-body">
+            <form method="POST" class="login-form">
+                <div class="mb-4">
+                    <label for="email" class="form-label">Email</label>
+                    <div class="input-group">
+                        <i class="bi bi-envelope-fill input-icon"></i>
+                        <input type="email" class="form-control has-icon" id="email" name="email"
+                            placeholder="Enter email" required autofocus>
+                    </div>
                 </div>
-                
-                <form method="POST" action="{{ url_for('admin_login') }}">
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email Address</label>
-                        <input type="email" class="form-control" id="email" name="email" 
-                               placeholder="admin@iotverse.com" required>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <i class="bi bi-lock-fill input-icon"></i>
+                        <input type="password" class="form-control has-icon" id="password" name="password"
+                            placeholder="Enter password" required>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" 
-                               name="password" required>
-                    </div>
-                    
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-box-arrow-in-right"></i> Login
-                        </button>
-                    </div>
-                </form>
-                
-                <div class="text-center mt-4">
-                    <small class="text-muted">
-                        <i class="bi bi-shield-check"></i> Secure Admin Access |
-                Developed and Sercured by <br>MintFire
-                    </small>
-                    <p class="text-muted">
-                Version: <span class="version-badge">v{{ config.version }}</span><br>
-                    </p>
                 </div>
-            </div>
+
+                <button type="submit" class="btn btn-primary login-btn">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                </button>
+            </form>
+        </div>
+
+        <div class="login-footer">
+            <a href="{{ url_for('home') }}" class="back-home-link">
+                <i class="bi bi-arrow-left"></i>
+                Back to Home
+            </a>
         </div>
     </div>
 </div>

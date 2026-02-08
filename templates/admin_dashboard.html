@@ -2,156 +2,374 @@
 
 {% block title %}Admin Dashboard - IoT Verse{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Dashboard Header */
+    .dashboard-header {
+        margin-bottom: var(--space-6);
+    }
+
+    .dashboard-header h1 {
+        font-size: 2.25rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+    }
+
+    .dashboard-header h1 i {
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .dashboard-header p {
+        color: var(--text-muted);
+        margin-top: var(--space-2);
+    }
+
+    /* Section Title */
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-top: var(--space-6);
+        margin-bottom: var(--space-5);
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+    }
+
+    .section-title i {
+        color: var(--primary);
+        font-size: 1.5rem;
+    }
+
+    body.dark-mode .section-title i {
+        color: #818cf8;
+    }
+
+    /* Enhanced Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--space-4);
+    }
+
+    .stat-card {
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        color: white;
+        position: relative;
+        overflow: hidden;
+        transition: all var(--transition-spring);
+        border: none;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: -30%;
+        right: -30%;
+        width: 60%;
+        height: 60%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .stat-card.purple {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    }
+
+    .stat-card.pink {
+        background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+    }
+
+    .stat-card.cyan {
+        background: linear-gradient(135deg, #06b6d4 0%, #0ea5e9 100%);
+    }
+
+    .stat-card.green {
+        background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+    }
+
+    .stat-card .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: var(--space-2);
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-card .stat-label {
+        font-size: 0.95rem;
+        font-weight: 500;
+        opacity: 0.9;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-card .stat-icon {
+        position: absolute;
+        right: var(--space-5);
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 4rem;
+        opacity: 0.2;
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: var(--space-3);
+    }
+
+    .quick-actions .btn {
+        padding: var(--space-4);
+        font-size: 0.95rem;
+        justify-content: center;
+    }
+
+    /* Config Cards */
+    .config-card {
+        height: 100%;
+    }
+
+    .config-card .card-header {
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+    }
+
+    .config-card .card-header i {
+        font-size: 1.25rem;
+    }
+
+    /* Colored Headers */
+    .card-header.header-warning {
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
+        color: #1a202c !important;
+        border-bottom: none;
+    }
+
+    .card-header.header-info {
+        background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%) !important;
+        color: white !important;
+        border-bottom: none;
+    }
+
+    .card-header.header-success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+        color: white !important;
+        border-bottom: none;
+    }
+
+    .card-header.header-danger {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+        color: white !important;
+        border-bottom: none;
+    }
+
+    /* Status Badge */
+    .status-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--border-radius-full);
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .status-indicator.on {
+        background: rgba(239, 68, 68, 0.15);
+        color: var(--danger);
+    }
+
+    .status-indicator.off {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--success);
+    }
+
+    body.dark-mode .status-indicator.on {
+        background: rgba(248, 113, 113, 0.2);
+        color: #f87171;
+    }
+
+    body.dark-mode .status-indicator.off {
+        background: rgba(52, 211, 153, 0.2);
+        color: #34d399;
+    }
+
+    /* Upload Zone */
+    .upload-zone {
+        border: 2px dashed var(--border-color);
+        border-radius: var(--border-radius);
+        padding: var(--space-6);
+        text-align: center;
+        transition: all var(--transition);
+        cursor: pointer;
+    }
+
+    .upload-zone:hover {
+        border-color: var(--primary);
+        background: rgba(99, 102, 241, 0.05);
+    }
+
+    .upload-zone i {
+        font-size: 3rem;
+        color: var(--primary);
+        margin-bottom: var(--space-3);
+    }
+
+    body.dark-mode .upload-zone {
+        border-color: var(--border-color);
+    }
+
+    body.dark-mode .upload-zone:hover {
+        border-color: #818cf8;
+        background: rgba(129, 140, 248, 0.1);
+    }
+
+    /* ASCII Preview */
+    .ascii-preview {
+        background: var(--bg-secondary);
+        border-radius: var(--border-radius);
+        padding: var(--space-4);
+        border: 1px solid var(--border-color);
+    }
+
+    .ascii-preview pre {
+        font-family: 'Courier New', monospace;
+        font-size: 0.8rem;
+        color: var(--primary);
+        margin: 0;
+        white-space: pre-wrap;
+    }
+
+    body.dark-mode .ascii-preview {
+        background: var(--bg-tertiary);
+    }
+
+    body.dark-mode .ascii-preview pre {
+        color: #818cf8;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h2">
-        <i class="bi bi-speedometer2"></i> Admin Dashboard
-    </h1>
-    <span class="badge bg-primary">v{{ config.version }}</span>
+<!-- Dashboard Header -->
+<div class="dashboard-header">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+        <div>
+            <h1>
+                <i class="bi bi-speedometer2"></i>
+                Admin Dashboard
+            </h1>
+            <p>Welcome back! Here's your IoT device inventory overview.</p>
+        </div>
+        <span class="version-badge" style="font-size: 0.8rem;">v{{ config.version }}</span>
+    </div>
 </div>
 
 <!-- Maintenance Mode Alert -->
 {% if config.maintenance_mode %}
-<div class="alert alert-warning alert-dismissible fade show" role="alert">
-    <i class="bi bi-exclamation-triangle"></i>
-    <strong>Maintenance Mode is ON</strong> - Website is currently in maintenance mode. Users will see a maintenance page.
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<div class="alert alert-warning mb-4" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    <strong>Maintenance Mode Active</strong> — Website is in maintenance mode. Regular users see a maintenance page.
 </div>
 {% endif %}
 
 <!-- Stats Cards -->
-<div class="row mb-4">
-    <div class="col-md-3">
-        <div class="card stats-card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h5 class="card-title">{{ stats.total_products }}</h5>
-                        <p class="card-text">Total Products</p>
-                    </div>
-                    <i class="bi bi-device-ssd"></i>
-                </div>
-            </div>
-        </div>
+<div class="stats-grid mb-5">
+    <div class="stat-card purple">
+        <div class="stat-value">{{ stats.total_products }}</div>
+        <div class="stat-label">Total Devices</div>
+        <i class="bi bi-cpu stat-icon"></i>
     </div>
-    
-    <div class="col-md-3">
-        <div class="card stats-card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h5 class="card-title">{{ stats.in_stock }}</h5>
-                        <p class="card-text">In Stock</p>
-                    </div>
-                    <i class="bi bi-check-circle"></i>
-                </div>
-            </div>
-        </div>
+
+    <div class="stat-card pink">
+        <div class="stat-value">{{ stats.in_stock }}</div>
+        <div class="stat-label">In Stock</div>
+        <i class="bi bi-check-circle-fill stat-icon"></i>
     </div>
-    
-    <div class="col-md-3">
-        <div class="card stats-card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h5 class="card-title">{{ stats.low_stock }}</h5>
-                        <p class="card-text">Low Stock</p>
-                    </div>
-                    <i class="bi bi-exclamation-triangle"></i>
-                </div>
-            </div>
-        </div>
+
+    <div class="stat-card cyan">
+        <div class="stat-value">{{ stats.out_of_stock }}</div>
+        <div class="stat-label">Out of Stock</div>
+        <i class="bi bi-x-circle-fill stat-icon"></i>
     </div>
-    
-    <div class="col-md-3">
-        <div class="card stats-card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h5 class="card-title">₹{{ "%.2f"|format(stats.total_value) }}</h5>
-                        <p class="card-text">Total Value</p>
-                    </div>
-                    <i class="bi bi-currency-dollar"></i>
-                </div>
-            </div>
-        </div>
+
+    <div class="stat-card green">
+        <div class="stat-value">{{ stats.total_quantity }}</div>
+        <div class="stat-label">Total Units</div>
+        <i class="bi bi-boxes stat-icon"></i>
     </div>
 </div>
 
 <!-- Quick Actions -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Quick Actions</h5>
-            </div>
-            <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <a href="{{ url_for('admin_products') }}" class="btn btn-outline-primary w-100">
-                            <i class="bi bi-box-seam"></i> Manage Products
-                        </a>
-                    </div>
-                    <div class="col-md-3">
-                        <a href="{{ url_for('add_product') }}" class="btn btn-outline-success w-100">
-                            <i class="bi bi-plus-circle"></i> Add Product
-                        </a>
-                    </div>
-                    <div class="col-md-3">
-                        <button type="button" class="btn btn-outline-warning w-100" data-bs-toggle="modal" 
-                                data-bs-target="#uploadCSVModal">
-                            <i class="bi bi-upload"></i> Upload CSV
-                        </button>
-                    </div>
-                    <div class="col-md-3">
-                        <a href="{{ url_for('admin_logout') }}" class="btn btn-outline-danger w-100">
-                            <i class="bi bi-box-arrow-right"></i> Logout
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<h2 class="section-title">
+    <i class="bi bi-lightning-charge-fill"></i>
+    Quick Actions
+</h2>
+<div class="quick-actions mb-4">
+    <a href="{{ url_for('admin_products') }}" class="btn btn-primary">
+        <i class="bi bi-box-seam"></i> Manage Products
+    </a>
+    <a href="{{ url_for('add_product') }}" class="btn btn-success">
+        <i class="bi bi-plus-circle-fill"></i> Add Product
+    </a>
+    <a href="{{ url_for('home') }}" class="btn btn-info">
+        <i class="bi bi-shop"></i> View Store
+    </a>
+    <a href="{{ url_for('chat') }}" class="btn btn-secondary">
+        <i class="bi bi-chat-dots-fill"></i> Volta Chat
+    </a>
+    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#uploadCSVModal">
+        <i class="bi bi-upload"></i> Upload CSV
+    </button>
+    <a href="{{ url_for('admin_logout') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-box-arrow-right"></i> Logout
+    </a>
 </div>
 
 <!-- CSV Upload Modal -->
 <div class="modal fade" id="uploadCSVModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Upload CSV File</h5>
+                <h5 class="modal-title">
+                    <i class="bi bi-file-earmark-spreadsheet me-2"></i>Upload CSV File
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST" action="{{ url_for('upload_csv') }}" enctype="multipart/form-data">
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Select CSV File</label>
-                        <input type="file" class="form-control" name="csv_file" accept=".csv" required>
-                        <div class="form-text">
-                            CSV format: name,price,quantity,availability,description
-                        </div>
+                    <div class="upload-zone mb-3" onclick="document.querySelector('input[name=csv_file]').click()">
+                        <i class="bi bi-cloud-arrow-up-fill"></i>
+                        <p class="mb-1">Click to upload or drag & drop</p>
+                        <small class="text-muted">CSV files only</small>
                     </div>
-                    
-                    <div class="upload-zone">
-                        <i class="bi bi-cloud-arrow-up display-4 text-primary"></i>
-                        <p class="mt-2">Drag & drop CSV file here or click to browse</p>
-                        <small class="text-muted">Supports: .csv files only</small>
-                    </div>
-                    
-                    <div class="alert alert-info mt-3">
-                        <h6><i class="bi bi-info-circle"></i> CSV Processing Notes:</h6>
-                        <ul class="mb-0">
-                            <li>Existing products will be updated based on name</li>
-                            <li>New products will be created</li>
-                            <li>Price changes will be recorded in history</li>
-                            <li>CSV will be converted to JSON automatically</li>
-                        </ul>
+                    <input type="file" class="form-control d-none" name="csv_file" accept=".csv" required>
+
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading mb-2">
+                            <i class="bi bi-info-circle-fill"></i> CSV Format
+                        </h6>
+                        <small>Columns: name, price, quantity, availability, description</small>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-upload"></i> Upload & Process
+                        <i class="bi bi-upload"></i> Upload
                     </button>
                 </div>
             </form>
@@ -159,239 +377,183 @@
     </div>
 </div>
 
-<!-- System Configuration Row -->
-<div class="row mb-4">
-    <!-- Website Maintenance Mode -->
+<!-- Configuration Section -->
+<h2 class="section-title">
+    <i class="bi bi-gear-fill"></i>
+    System Configuration
+</h2>
+
+<div class="row g-4 mb-4">
+    <!-- Maintenance Mode -->
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-warning">
-                <h5 class="card-title mb-0" style="color: #000;">
-                    <i class="bi bi-tools"></i> Maintenance Mode
-                </h5>
+        <div class="card config-card">
+            <div class="card-header header-warning">
+                <i class="bi bi-tools"></i> Maintenance Mode
             </div>
             <div class="card-body">
-                <p class="mb-3" style="color: #64748b;">
-                    Toggle maintenance mode to temporarily disable website for users while keeping admin access active.
-                </p>
-                <div class="d-flex align-items-center gap-3">
-                    <div class="form-check form-switch" style="margin-top: 0;">
-                        <div class="badge {% if config.maintenance_mode %}bg-danger{% else %}bg-success{% endif %} p-2">
-                            <i class="bi {% if config.maintenance_mode %}bi-exclamation-circle{% else %}bi-check-circle{% endif %}"></i>
-                            {% if config.maintenance_mode %} ON {% else %} OFF {% endif %}
-                        </div>
-                    </div>
+                <p class="text-muted mb-3">Toggle maintenance mode to temporarily disable website for regular users.</p>
+
+                <div class="mb-3">
+                    <span class="status-indicator {% if config.maintenance_mode %}on{% else %}off{% endif %}">
+                        <i
+                            class="bi {% if config.maintenance_mode %}bi-exclamation-circle-fill{% else %}bi-check-circle-fill{% endif %}"></i>
+                        {% if config.maintenance_mode %}ACTIVE{% else %}INACTIVE{% endif %}
+                    </span>
                 </div>
-                <hr>
+
                 <form method="POST" action="{{ url_for('toggle_maintenance_mode') }}">
-                    <button type="submit" class="btn btn-{% if config.maintenance_mode %}success{% else %}warning{% endif %} w-100">
-                        <i class="bi bi-toggle{% if config.maintenance_mode %}-on{% else %}-off{% endif %}"></i>
-                        {% if config.maintenance_mode %}Turn OFF{% else %}Turn ON{% endif %} Maintenance Mode
+                    <button type="submit"
+                        class="btn btn-{% if config.maintenance_mode %}success{% else %}warning{% endif %} w-100">
+                        <i class="bi bi-toggle-{% if config.maintenance_mode %}on{% else %}off{% endif %}"></i>
+                        Turn {% if config.maintenance_mode %}OFF{% else %}ON{% endif %}
                     </button>
                 </form>
-                <small class="text-muted d-block mt-2">
-                    <i class="bi bi-info-circle"></i> Admin users can still access the dashboard during maintenance
-                </small>
             </div>
         </div>
     </div>
 
     <!-- Version Management -->
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-info">
-                <h5 class="card-title mb-0" style="color: #fff;">
-                    <i class="bi bi-tag"></i> Version Management
-                </h5>
+        <div class="card config-card">
+            <div class="card-header header-info">
+                <i class="bi bi-tag-fill"></i> Version Management
             </div>
             <div class="card-body">
-                <p class="mb-3" style="color: #64748b;">
-                    Update the application version displayed on the dashboard.
-                </p>
+                <p class="text-muted mb-3">Update the application version displayed throughout the app.</p>
+
                 <form method="POST" action="{{ url_for('update_version') }}">
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" name="version" value="{{ config.version }}" placeholder="e.g., 2.1.1.8" required>
+                        <input type="text" class="form-control" name="version" value="{{ config.version }}"
+                            placeholder="e.g., 2.1.1.8" required>
                         <button class="btn btn-info" type="submit">
-                            <i class="bi bi-check-circle"></i> Update
+                            <i class="bi bi-check-lg"></i> Update
                         </button>
                     </div>
                 </form>
-                <div class="alert alert-light border" style="margin: 0;">
-                    <strong>Current Version:</strong> <code>{{ config.version }}</code>
+
+                <div class="alert alert-light border mb-0">
+                    <small><strong>Current:</strong> <code>{{ config.version }}</code></small>
                 </div>
-                <small class="text-muted d-block mt-2">
-                    <i class="bi bi-info-circle"></i> Version format: Major.Minor.Patch.Build
-                </small>
             </div>
         </div>
     </div>
 
     <!-- ASCII Art Management -->
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-success">
-                <h5 class="card-title mb-0" style="color: #fff;">
-                    <i class="bi bi-palette"></i> ASCII Art Management
-                </h5>
+        <div class="card config-card">
+            <div class="card-header header-success">
+                <i class="bi bi-palette-fill"></i> ASCII Art
             </div>
             <div class="card-body">
-                <p class="mb-3" style="color: #64748b;">
-                    Customize ASCII art displayed on the home page before the search section.
-                </p>
                 <form method="POST" action="{{ url_for('update_ascii_art') }}">
                     <div class="mb-3">
-                        <label for="ascii_art" class="form-label">ASCII Art Content</label>
-                        <textarea class="form-control" id="ascii_art" name="ascii_art" rows="6" placeholder="Paste your ASCII art here..." style="font-family: 'Courier New', monospace; font-size: 0.85rem;">{{ config.ascii_art if config.ascii_art else '' }}</textarea>
-                        <small class="text-muted d-block mt-2">
-                            Use Courier New font for best display. Supports Unicode characters.
-                        </small>
+                        <textarea class="form-control" name="ascii_art" rows="4" placeholder="Paste ASCII art..."
+                            style="font-family: 'Courier New', monospace; font-size: 0.8rem;">{{ config.ascii_art if config.ascii_art else '' }}</textarea>
                     </div>
+
                     <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="ascii_art_enabled" name="ascii_art_enabled" {% if config.ascii_art_enabled %}checked{% endif %}>
+                        <input class="form-check-input" type="checkbox" id="ascii_art_enabled" name="ascii_art_enabled"
+                            {% if config.ascii_art_enabled %}checked{% endif %}>
                         <label class="form-check-label" for="ascii_art_enabled">
-                            <i class="bi bi-eye"></i> Show ASCII Art on Home Page
+                            Show on Home Page
                         </label>
                     </div>
+
                     <button class="btn btn-success w-100" type="submit">
-                        <i class="bi bi-check-circle"></i> Update ASCII Art
+                        <i class="bi bi-check-circle"></i> Save
                     </button>
                 </form>
-                <div class="alert alert-light border mt-3" style="margin: 0;">
-                    <strong>Status:</strong> 
-                    {% if config.ascii_art_enabled %}
-                        <span class="badge bg-success"><i class="bi bi-check-circle"></i> Enabled</span>
-                    {% else %}
-                        <span class="badge bg-secondary"><i class="bi bi-eye-slash"></i> Disabled</span>
-                    {% endif %}
+
+                {% if config.ascii_art %}
+                <div class="ascii-preview mt-3">
+                    <small class="text-muted d-block mb-2">Preview:</small>
+                    <pre>{{ config.ascii_art[:100] }}{% if config.ascii_art|length > 100 %}...{% endif %}</pre>
                 </div>
-                <!-- ASCII Art Preview -->
-                <div class="mt-3 p-3" style="background: #f8f9fa; border-radius: 0.375rem; border: 1px solid #dee2e6;">
-                    <small class="text-muted d-block mb-2"><i class="bi bi-eye"></i> Light Mode Preview (Blood Red)</small>
-                    <pre style="color: #DC143C; font-size: 0.85rem; font-family: 'Courier New', monospace; margin: 0; white-space: pre-wrap; word-wrap: break-word;">{{ config.ascii_art if config.ascii_art else 'Your ASCII art preview here...' }}</pre>
-                </div>
+                {% endif %}
             </div>
         </div>
     </div>
-</div>
 
-<!-- Price History Management -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-danger">
-                <h5 class="card-title mb-0" style="color: #fff;">
-                    <i class="bi bi-clock-history"></i> Price History Management
-                </h5>
+    <!-- Price History -->
+    <div class="col-md-6">
+        <div class="card config-card">
+            <div class="card-header header-danger">
+                <i class="bi bi-clock-history"></i> Price History
             </div>
             <div class="card-body">
-                <p class="mb-3" style="color: #64748b;">
-                    Manage and clear price history for products. This helps maintain clean records or reset tracking data.
-                </p>
-                
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <div class="card border-danger border-2 bg-light">
-                            <div class="card-body">
-                                <h6 class="card-title">
-                                    <i class="bi bi-trash-fill text-danger"></i> Clear All Price History
-                                </h6>
-                                <p class="card-text small" style="color: #64748b;">
-                                    Remove price history for ALL products at once. This action cannot be undone.
-                                </p>
-                                <form method="POST" action="{{ url_for('clear_all_price_history') }}" style="display: inline;">
-                                    <button type="submit" class="btn btn-danger btn-sm w-100" 
-                                            onclick="return confirm('Are you sure you want to clear ALL price history? This cannot be undone!');">
-                                        <i class="bi bi-exclamation-triangle"></i> Clear All
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
+                <p class="text-muted mb-3">Manage and clear price history records for products.</p>
+
+                <div class="row g-2">
+                    <div class="col-6">
+                        <form method="POST" action="{{ url_for('clear_all_price_history') }}">
+                            <button type="submit" class="btn btn-danger btn-sm w-100"
+                                onclick="return confirm('Clear ALL price history? This cannot be undone!');">
+                                <i class="bi bi-trash-fill"></i> Clear All
+                            </button>
+                        </form>
                     </div>
-                    
-                    <div class="col-md-6">
-                        <div class="card border-warning border-2 bg-light">
-                            <div class="card-body">
-                                <h6 class="card-title">
-                                    <i class="bi bi-pencil-square text-warning"></i> Clear Individual History
-                                </h6>
-                                <p class="card-text small" style="color: #64748b;">
-                                    Clear price history for specific products from the products list.
-                                </p>
-                                <a href="{{ url_for('admin_products') }}" class="btn btn-warning btn-sm w-100">
-                                    <i class="bi bi-box-seam"></i> Go to Products
-                                </a>
-                            </div>
-                        </div>
+                    <div class="col-6">
+                        <a href="{{ url_for('admin_products') }}" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="bi bi-list"></i> By Product
+                        </a>
                     </div>
-                </div>
-                
-                <div class="alert alert-warning mt-3 mb-0">
-                    <i class="bi bi-lightbulb"></i> <strong>Tip:</strong> Individual product price history can be cleared from the 
-                    <a href="{{ url_for('admin_products') }}" class="alert-link">Products Management</a> page.
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- System Information -->
-<div class="row">
+<!-- System Info -->
+<div class="row g-4">
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-database"></i> Data Management
-                </h5>
+                <i class="bi bi-database-fill me-2"></i>Data Management
             </div>
             <div class="card-body">
-                <div class="list-group">
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <span>Products Database</span>
-                        <span class="badge bg-primary rounded-pill">
-                            {{ stats.total_products }} items
-                        </span>
-                    </div>
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <span>Price History</span>
-                        <span class="badge bg-success rounded-pill">
-                            {{ stats.total_products }} tracked
-                        </span>
-                    </div>
-                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                        <span>Admin Credentials</span>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        Products Database
+                        <span class="badge bg-primary rounded-pill">{{ stats.total_products }} items</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        Price History
+                        <span class="badge bg-success rounded-pill">{{ stats.total_products }} tracked</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        Admin Credentials
                         <span class="badge bg-warning rounded-pill">Secured</span>
-                    </div>
-                </div>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-gear"></i> System Information
-                </h5>
+                <i class="bi bi-info-circle-fill me-2"></i>System Information
             </div>
             <div class="card-body">
-                <ul class="list-unstyled">
+                <ul class="list-unstyled mb-0">
                     <li class="mb-2">
-                        <i class="bi bi-shield-check text-success"></i>
-                        <strong>Security:</strong> Bcrypt Password Hashing
+                        <i class="bi bi-shield-check text-success me-2"></i>
+                        <strong>Security:</strong> Bcrypt Hashing
                     </li>
                     <li class="mb-2">
-                        <i class="bi bi-filetype-json text-primary"></i>
+                        <i class="bi bi-filetype-json text-primary me-2"></i>
                         <strong>Database:</strong> JSON File System
                     </li>
                     <li class="mb-2">
-                        <i class="bi bi-graph-up text-info"></i>
-                        <strong>Analytics:</strong> Price History Tracking
+                        <i class="bi bi-graph-up-arrow text-info me-2"></i>
+                        <strong>Analytics:</strong> Price Tracking
                     </li>
                     <li class="mb-2">
-                        <i class="bi bi-upload text-warning"></i>
-                        <strong>Import:</strong> CSV to JSON Conversion
+                        <i class="bi bi-cloud-upload text-warning me-2"></i>
+                        <strong>Import:</strong> CSV Support
                     </li>
-                    <li>
-                        <i class="bi bi-code-slash text-secondary"></i>
+                    <li class="mb-0">
+                        <i class="bi bi-code-slash text-secondary me-2"></i>
                         <strong>Developer:</strong> MintFire
                     </li>
                 </ul>
@@ -399,30 +561,4 @@
         </div>
     </div>
 </div>
-
-<style>
-    .card-header.bg-warning {
-        background-color: #fbbf24 !important;
-    }
-    
-    .card-header.bg-danger {
-        background-color: #ef4444 !important;
-    }
-    
-    .card-header.bg-info {
-        background-color: #3b82f6 !important;
-    }
-    
-    body.dark-mode .card-header.bg-warning {
-        background-color: #d97706 !important;
-    }
-    
-    body.dark-mode .card-header.bg-danger {
-        background-color: #dc2626 !important;
-    }
-    
-    body.dark-mode .card-header.bg-info {
-        background-color: #1d4ed8 !important;
-    }
-</style>
 {% endblock %}

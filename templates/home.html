@@ -1,277 +1,283 @@
 {% extends "base.html" %}
 
-{% block title %}IoT Verse - Home{% endblock %}
+{% block title %}IoT Verse - Smart Device Inventory{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.0/nouislider.min.css">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 <style>
+    /* Hero ASCII Art Section */
+    .ascii-hero {
+        background: transparent;
+        border: none;
+        margin-bottom: var(--space-6);
+    }
+
+    .ascii-art-text {
+        font-family: 'Courier New', monospace;
+        font-size: 1.1rem;
+        font-weight: 600;
+        letter-spacing: 2px;
+        line-height: 1.3;
+        white-space: pre-wrap;
+        animation: float 4s ease-in-out infinite, glow 3s ease-in-out infinite;
+        margin: 0;
+        color: var(--primary);
+    }
+
+    body.dark-mode .ascii-art-text {
+        color: #818cf8;
+        text-shadow: 0 0 20px rgba(129, 140, 248, 0.4);
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    @keyframes glow {
+
+        0%,
+        100% {
+            filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.3));
+        }
+
+        50% {
+            filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.5));
+        }
+    }
+
+    .ascii-welcome {
+        color: var(--primary);
+        animation: fadeInOut 4s ease-in-out infinite;
+    }
+
+    @keyframes fadeInOut {
+
+        0%,
+        100% {
+            opacity: 0.8;
+        }
+
+        50% {
+            opacity: 1;
+        }
+    }
+
+    /* Device Type Badge */
     .device-type-badge {
-        background-color: #e2e8f0;
-        color: #475569;
-        padding: 0.25rem 0.75rem;
-        border-radius: 15px;
-        font-size: 0.8rem;
-        margin-right: 0.5rem;
-        margin-bottom: 0.5rem;
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--primary);
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--border-radius-full);
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-right: var(--space-2);
+        margin-bottom: var(--space-2);
         display: inline-block;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: all var(--transition);
+        border: 1px solid transparent;
     }
-    
+
     .device-type-badge:hover {
-        background-color: #cbd5e1;
+        background: var(--primary);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-glow);
     }
-    
+
+    body.dark-mode .device-type-badge {
+        background: rgba(129, 140, 248, 0.15);
+        color: #818cf8;
+    }
+
+    body.dark-mode .device-type-badge:hover {
+        background: #818cf8;
+        color: white;
+    }
+
+    /* Filter Tag */
     .filter-tag {
-        background-color: #dbeafe;
-        color: #1e40af;
-        padding: 0.25rem 0.75rem;
-        border-radius: 15px;
+        background: rgba(6, 182, 212, 0.15);
+        color: var(--accent);
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--border-radius-full);
         font-size: 0.85rem;
-        margin-right: 0.5rem;
-        margin-bottom: 0.5rem;
+        font-weight: 500;
+        margin-right: var(--space-2);
+        margin-bottom: var(--space-2);
         display: inline-flex;
         align-items: center;
+        border: 1px solid rgba(6, 182, 212, 0.3);
     }
-    
+
     .filter-tag .close {
-        margin-left: 0.5rem;
-        font-size: 1rem;
+        margin-left: var(--space-2);
         cursor: pointer;
         opacity: 0.7;
+        font-size: 1.1rem;
     }
-    
+
     .filter-tag .close:hover {
         opacity: 1;
     }
-    
+
+    body.dark-mode .filter-tag {
+        background: rgba(34, 211, 238, 0.15);
+        color: #22d3ee;
+        border-color: rgba(34, 211, 238, 0.3);
+    }
+
+    /* Currency Badge */
+    .currency-badge {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+        color: var(--primary);
+        padding: var(--space-2) var(--space-4);
+        border-radius: var(--border-radius-full);
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+
+    body.dark-mode .currency-badge {
+        background: rgba(129, 140, 248, 0.15);
+        color: #818cf8;
+        border-color: rgba(129, 140, 248, 0.3);
+    }
+
+    /* Price Range Slider */
+    .noUi-target {
+        background: var(--bg-tertiary);
+        border: none;
+        border-radius: var(--border-radius-full);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .noUi-connect {
+        background: var(--gradient-primary);
+    }
+
+    .noUi-handle {
+        background: white;
+        border: 3px solid var(--primary);
+        border-radius: 50%;
+        box-shadow: var(--shadow);
+        cursor: pointer;
+    }
+
+    .noUi-handle:focus {
+        outline: none;
+        box-shadow: var(--shadow-glow);
+    }
+
+    body.dark-mode .noUi-target {
+        background: var(--bg-tertiary);
+    }
+
+    body.dark-mode .noUi-handle {
+        background: var(--bg-secondary);
+        border-color: #818cf8;
+    }
+
     .price-range-values {
         display: flex;
         justify-content: space-between;
-        margin-top: 0.5rem;
+        margin-top: var(--space-3);
         font-size: 0.9rem;
-        color: #64748b;
+        color: var(--text-secondary);
         font-weight: 500;
     }
-    
-    .price-range-values span::before {
-        content: "";
-        margin-right: 0;
+
+    /* Form Price Label */
+    .form-price-label {
+        color: var(--text-primary);
+        font-weight: 600;
+        margin-bottom: var(--space-3);
     }
-    
-    .total-value-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border-radius: var(--border-radius);
-        padding: 1.5rem;
+
+    /* Product Card Enhancements */
+    .iot-card .card-img-top {
+        height: 180px;
+        object-fit: cover;
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    }
+
+    body.dark-mode .iot-card .card-img-top {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: var(--space-8);
+    }
+
+    .empty-state i {
+        font-size: 5rem;
+        color: var(--text-muted);
+        margin-bottom: var(--space-4);
+    }
+
+    .empty-state h3 {
+        color: var(--text-primary);
+        margin-bottom: var(--space-3);
+    }
+
+    .empty-state p {
+        color: var(--text-muted);
+        margin-bottom: var(--space-5);
+    }
+
+    /* Stats Section */
+    .stats-section .card {
         text-align: center;
     }
-    
-    .total-value-card h3 {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
+
+    .stats-section h3 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: var(--space-2);
     }
-    
-    .total-value-card h3::before {
-        content: "";
-        font-size: 1.8rem;
-        margin-right: 0;
+
+    body.dark-mode .stats-section h3 {
+        color: #818cf8;
     }
-    
-    .total-value-card p {
-        opacity: 0.9;
+
+    .stats-section p {
+        color: var(--text-muted);
         margin: 0;
-    }
-    
-    .currency-badge {
-        background-color: #f0f9ff;
-        color: #0369a1;
-        padding: 0.25rem 0.75rem;
-        border-radius: 15px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        display: inline-block;
-        margin-bottom: 1rem;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- ASCII Art Display Section with Animation -->
+<!-- ASCII Art Display Section -->
 {% if config.ascii_art_enabled and config.ascii_art %}
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card ascii-art-container" style="background: transparent; border: none; overflow: visible; box-shadow: none;">
-            <div class="card-body text-center ascii-art-body" style="padding: 2rem; position: relative; background: transparent; border: none;">
-                <style>
-                    /* Dark mode detection */
-                    @media (prefers-color-scheme: dark) {
-                        .ascii-art-body pre {
-                            color: #4f46e5;
-                            text-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
-                        }
-                    }
-                    
-                    @media (prefers-color-scheme: light) {
-                        .ascii-art-body pre {
-                            color: #DC143C;
-                            text-shadow: 0 0 10px rgba(220, 20, 60, 0.2);
-                        }
-                    }
-                    
-                    /* Apply dark mode class if available */
-                    body.dark-mode .ascii-art-body pre {
-                        color: #4f46e5;
-                        text-shadow: 0 0 10px rgba(79, 70, 229, 0.3);
-                    }
-                    
-                    body.light-mode .ascii-art-body pre {
-                        color: #DC143C;
-                        text-shadow: 0 0 10px rgba(220, 20, 60, 0.2);
-                    }
-                    
-                    /* ASCII Art Animation */
-                    @keyframes float {
-                        0%, 100% {
-                            transform: translateY(0px);
-                            opacity: 1;
-                        }
-                        50% {
-                            transform: translateY(-15px);
-                            opacity: 0.95;
-                        }
-                    }
-                    
-                    @keyframes glow {
-                        0%, 100% {
-                            filter: drop-shadow(0 0 5px rgba(220, 20, 60, 0.3));
-                        }
-                        50% {
-                            filter: drop-shadow(0 0 15px rgba(220, 20, 60, 0.6));
-                        }
-                    }
-                    
-                    /* Chrome-specific fixes for better rendering */
-                    .ascii-art-body pre {
-                        font-size: 1.2rem;
-                        font-family: 'Courier New', 'Courier', monospace;
-                        margin: 0;
-                        white-space: pre-wrap;
-                        word-wrap: break-word;
-                        letter-spacing: 2px;
-                        line-height: 1.3;
-                        animation: float 3s ease-in-out infinite, glow 3s ease-in-out infinite;
-                        transition: color 0.3s ease;
-                        font-weight: 600;
-                        -webkit-font-smoothing: antialiased;
-                        -moz-osx-font-smoothing: grayscale;
-                        -webkit-text-rendering: optimizeLegibility;
-                        text-rendering: optimizeLegibility;
-                        /* Chrome rendering improvements */
-                        transform: translate3d(0, 0, 0);
-                        -webkit-transform: translate3d(0, 0, 0);
-                        will-change: transform;
-                    }
-                    
-                    .ascii-art-welcome {
-                        margin-top: 1.5rem;
-                        font-size: 0.95rem;
-                        animation: fadeInOut 4s ease-in-out infinite;
-                        -webkit-font-smoothing: antialiased;
-                    }
-                    
-                    @keyframes fadeInOut {
-                        0%, 100% {
-                            opacity: 0.8;
-                        }
-                        50% {
-                            opacity: 1;
-                        }
-                    }
-                    
-                    /* Responsive adjustments */
-                    @media (max-width: 768px) {
-                        .ascii-art-body pre {
-                            font-size: 0.9rem;
-                            letter-spacing: 1px;
-                        }
-                    }
-                    
-                    /* Remove box styling for dark mode */
-                    body.dark-mode .ascii-art-container,
-                    body.dark-mode .ascii-art-body {
-                        background: transparent !important;
-                        border: none !important;
-                        box-shadow: none !important;
-                    }
-                    
-                    @media (prefers-color-scheme: dark) {
-                        .ascii-art-container,
-                        .ascii-art-body {
-                            background: transparent !important;
-                            border: none !important;
-                            box-shadow: none !important;
-                        }
-                    }
-                </style>
-                <pre class="ascii-art-text">{{ config.ascii_art }}</pre>
-                <div class="ascii-art-welcome" style="color: #DC143C;">
-                    <i class="bi bi-sparkles"></i> Welcome to IoT Verse
-                </div>
-            </div>
-        </div>
+<div class="ascii-hero text-center fade-in">
+    <pre class="ascii-art-text">{{ config.ascii_art }}</pre>
+    <div class="ascii-welcome mt-3">
+        <i class="bi bi-lightning-charge-fill me-2"></i>Welcome to IoT Verse
     </div>
 </div>
-
-<script>
-    // Dynamic color adjustment based on dark mode
-    function updateAsciiArtColors() {
-        const asciiPre = document.querySelector('.ascii-art-body pre');
-        const asciiWelcome = document.querySelector('.ascii-art-welcome');
-        
-        if (!asciiPre) return;
-        
-        // Check if dark mode is enabled
-        const isDarkMode = document.documentElement.getAttribute('data-bs-theme') === 'dark' ||
-                          document.body.classList.contains('dark-mode') ||
-                          window.matchMedia('(prefers-color-scheme: dark)').matches;
-        
-        if (isDarkMode) {
-            asciiPre.style.color = '#e54646ff';
-            asciiPre.style.textShadow = '0 0 10px rgba(255, 0, 0, 0.3)';
-            if (asciiWelcome) asciiWelcome.style.color = '#6366f1';
-        } else {
-            asciiPre.style.color = '#DC143C';
-            asciiPre.style.textShadow = '0 0 10px rgba(220, 20, 60, 0.2)';
-            if (asciiWelcome) asciiWelcome.style.color = '#DC143C';
-        }
-    }
-    
-    // Update colors on load
-    document.addEventListener('DOMContentLoaded', updateAsciiArtColors);
-    
-    // Update colors when dark mode toggle is clicked
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('[data-bs-toggle="dark-mode"], .dark-mode-toggle, #darkModeToggle')) {
-            setTimeout(updateAsciiArtColors, 100);
-        }
-    });
-    
-    // Listen for theme changes
-    if (window.matchMedia) {
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateAsciiArtColors);
-    }
-</script>
 {% endif %}
 
 <!-- Currency Indicator -->
-<div class="row mb-3">
-    <div class="col-12 d-flex justify-content-between align-items-center">
-        <div class="currency-badge">
+<div class="row mb-4">
+    <div class="col-12">
+        <span class="currency-badge">
             <i class="bi bi-currency-rupee"></i> All prices in Indian Rupees
-        </div>
+        </span>
     </div>
 </div>
 
@@ -282,14 +288,16 @@
             <div class="card-body">
                 <form action="{{ url_for('search') }}" method="get" class="row g-3">
                     <div class="col-md-4">
-                        <input type="text" class="form-control" name="q" placeholder="Search IoT devices..." 
-                               value="{{ search_query if search_query else '' }}">
+                        <input type="text" class="form-control" name="q" placeholder="Search IoT devices..."
+                            value="{{ search_query if search_query else '' }}">
                     </div>
                     <div class="col-md-2">
                         <select class="form-select" name="availability">
                             <option value="all">All Status</option>
-                            <option value="In Stock" {% if request.args.get('availability') == 'In Stock' %}selected{% endif %}>In Stock</option>
-                            <option value="Out of Stock" {% if request.args.get('availability') == 'Out of Stock' %}selected{% endif %}>Out of Stock</option>
+                            <option value="In Stock" {% if request.args.get('availability')=='In Stock' %}selected{%
+                                endif %}>In Stock</option>
+                            <option value="Out of Stock" {% if request.args.get('availability')=='Out of Stock'
+                                %}selected{% endif %}>Out of Stock</option>
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -297,7 +305,8 @@
                             <option value="all">All Types</option>
                             {% for type in types %}
                             {% if type %}
-                            <option value="{{ type }}" {% if request.args.get('type') == type %}selected{% endif %}>{{ type }}</option>
+                            <option value="{{ type }}" {% if request.args.get('type')==type %}selected{% endif %}>{{
+                                type }}</option>
                             {% endif %}
                             {% endfor %}
                         </select>
@@ -307,26 +316,29 @@
                             <i class="bi bi-search"></i> Search
                         </button>
                     </div>
-                    
+
                     <!-- Advanced Filters -->
                     <div class="col-12 mt-3">
-                        <a class="btn btn-link" data-bs-toggle="collapse" href="#advancedFilters">
-                            <i class="bi bi-funnel"></i> Advanced Filters
+                        <a class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" href="#advancedFilters">
+                            <i class="bi bi-funnel-fill"></i> Advanced Filters
                         </a>
                         <div class="collapse" id="advancedFilters">
-                            <div class="row g-3 mt-2">
+                            <div class="row g-3 mt-2 p-3"
+                                style="background: var(--bg-secondary); border-radius: var(--border-radius);">
                                 <div class="col-md-6">
-                                    <label class="form-label form-price-label">Price Range</label>
-                                    <div id="priceRange"></div>
+                                    <label class="form-price-label">Price Range</label>
+                                    <div id="priceRange" style="margin-top: 1rem;"></div>
                                     <div class="price-range-values">
-                                        <span>Min: <span id="minPriceValue">0</span></span>
-                                        <span>Max: <span id="maxPriceValue">50,000</span></span>
+                                        <span>Min: ₹<span id="minPriceValue">0</span></span>
+                                        <span>Max: ₹<span id="maxPriceValue">50,000</span></span>
                                     </div>
-                                    <input type="hidden" name="min_price" id="minPrice" value="{{ request.args.get('min_price', '0') }}">
-                                    <input type="hidden" name="max_price" id="maxPrice" value="{{ request.args.get('max_price', '50000') }}">
+                                    <input type="hidden" name="min_price" id="minPrice"
+                                        value="{{ request.args.get('min_price', '0') }}">
+                                    <input type="hidden" name="max_price" id="maxPrice"
+                                        value="{{ request.args.get('max_price', '50000') }}">
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label">Popular Types</label>
+                                    <label class="form-price-label">Popular Types</label>
                                     <div class="d-flex flex-wrap">
                                         {% for type in types[:10] %}
                                         {% if type %}
@@ -336,7 +348,8 @@
                                         {% endif %}
                                         {% endfor %}
                                         {% if types|length > 10 %}
-                                        <span class="device-type-badge" data-bs-toggle="modal" data-bs-target="#allTypesModal">
+                                        <span class="device-type-badge" data-bs-toggle="modal"
+                                            data-bs-target="#allTypesModal">
                                             +{{ types|length - 10 }} more
                                         </span>
                                         {% endif %}
@@ -345,12 +358,13 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Active Filters -->
-                    {% if request.args.get('q') or request.args.get('availability') != 'all' or request.args.get('type') != 'all' or request.args.get('min_price') or request.args.get('max_price') %}
+                    {% if request.args.get('q') or request.args.get('availability') != 'all' or request.args.get('type')
+                    != 'all' or request.args.get('min_price') or request.args.get('max_price') %}
                     <div class="col-12 mt-3">
                         <small class="text-muted">Active Filters:</small>
-                        <div class="d-flex flex-wrap mt-1">
+                        <div class="d-flex flex-wrap mt-2">
                             {% if request.args.get('q') %}
                             <span class="filter-tag">
                                 Search: "{{ request.args.get('q') }}"
@@ -371,12 +385,13 @@
                             {% endif %}
                             {% if request.args.get('min_price') or request.args.get('max_price') %}
                             <span class="filter-tag">
-                                Price: {{ request.args.get('min_price', '0') }} - {{ request.args.get('max_price', '50000') }}
+                                Price: ₹{{ request.args.get('min_price', '0') }} - ₹{{ request.args.get('max_price',
+                                '50000') }}
                                 <span class="close" onclick="removePriceFilter()">&times;</span>
                             </span>
                             {% endif %}
-                            <a href="{{ url_for('home') }}" class="btn btn-sm btn-outline-secondary align-self-center">
-                                Clear All
+                            <a href="{{ url_for('home') }}" class="btn btn-sm btn-outline-secondary ms-2">
+                                <i class="bi bi-x-circle"></i> Clear All
                             </a>
                         </div>
                     </div>
@@ -392,7 +407,10 @@
 <div class="row mb-4">
     <div class="col-12">
         <div class="total-value-card">
-            <h3 class="format-price" id="totalValueDisplay" data-price-inr="{{ total_value }}" data-original-text="{{ "%.2f"|format(total_value) }}">₹{{ "%.2f"|format(total_value) }}</h3>
+            <h3 class="format-price" id="totalValueDisplay" data-price-inr="{{ total_value }}" data-original-text="{{ "
+                %.2f"|format(total_value) }}">
+                ₹{{ "%.2f"|format(total_value) }}
+            </h3>
             <p>Total Inventory Value ({{ products|length }} devices)</p>
         </div>
     </div>
@@ -402,91 +420,96 @@
 <!-- Products Grid -->
 <div class="row" id="product-grid">
     {% if products %}
-        {% for product in products %}
-        <div class="col-md-4 col-lg-3 mb-4">
-            <div class="card iot-card h-100">
-                <div class="position-relative">
-                    <img src="{{ url_for('uploaded_file', filename=product.image) if product.image != 'default.jpg' else url_for('static', filename='images/default-device.gif') }}" 
-                         class="card-img-top" 
-                         alt="{{ product.name }}"
-                         onerror="this.src='{{ url_for('static', filename='images/default-device.gif') }}'">
-                    <span class="badge badge-availability {% if product.availability == 'In Stock' %}badge-instock
+    {% for product in products %}
+    <div class="col-md-4 col-lg-3 mb-4 fade-in" style="animation-delay: {{ loop.index * 50 }}ms;">
+        <div class="card iot-card h-100">
+            <div class="position-relative overflow-hidden">
+                <img src="{{ url_for('uploaded_file', filename=product.image) if product.image != 'default.jpg' else url_for('static', filename='images/default-device.gif') }}"
+                    class="card-img-top" alt="{{ product.name }}"
+                    onerror="this.src='{{ url_for('static', filename='images/default-device.gif') }}'">
+                <span class="badge badge-availability {% if product.availability == 'In Stock' %}badge-instock
                         {% elif product.availability == 'Out of Stock' %}badge-outofstock
                         {% else %}bg-secondary{% endif %}">
-                        {{ product.availability }}
+                    {{ product.availability }}
+                </span>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                {% if product.type %}
+                <span class="badge bg-light text-dark mb-2" style="font-weight: 500;">{{ product.type }}</span>
+                {% endif %}
+                <p class="card-text text-muted" style="font-size: 0.9rem;">
+                    {{ product.description[:80] }}{% if product.description|length > 80 %}...{% endif %}
+                </p>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <span class="price-tag format-price" data-price-inr="{{ product.price }}" data-original-text="{{ "
+                        %.2f"|format(product.price) }}">{{ "%.2f"|format(product.price) }}</span>
+                    <span class="badge bg-secondary" style="font-weight: 500;">
+                        <i class="bi bi-box"></i> {{ product.quantity }} units
                     </span>
                 </div>
-                <div class="card-body">
-                    <h5 class="card-title">{{ product.name }}</h5>
-                    {% if product.type %}
-                    <span class="badge bg-light text-dark mb-2">{{ product.type }}</span>
-                    {% endif %}
-                    <p class="card-text text-muted" style="font-size: 0.9rem;">
-                        {{ product.description[:80] }}{% if product.description|length > 80 %}...{% endif %}
-                    </p>
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <span class="price-tag format-price" data-price-inr="{{ product.price }}" data-original-text="{{ "%.2f"|format(product.price) }}">{{ "%.2f"|format(product.price) }}</span>
-                        <span class="badge bg-secondary">
-                            <i class="bi bi-box"></i> {{ product.quantity }} units
-                        </span>
-                    </div>
-                </div>
-                <div class="card-footer bg-transparent">
-                    <a href="{{ url_for('product_detail', product_id=product.id) }}" 
-                       class="btn btn-outline-primary btn-sm w-100">
-                        <i class="bi bi-info-circle"></i> View Details
-                    </a>
-                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('product_detail', product_id=product.id) }}"
+                    class="btn btn-outline-primary btn-sm w-100">
+                    <i class="bi bi-eye-fill"></i> View Details
+                </a>
             </div>
         </div>
-        {% endfor %}
+    </div>
+    {% endfor %}
     {% else %}
-        <div class="col-12">
-            <div class="text-center py-5">
-                <i class="bi bi-device-ssd display-1 text-muted"></i>
-                <h3 class="mt-3">No IoT Devices Found</h3>
-                <p class="text-muted">
-                    {% if search_query or request.args.get('availability') != 'all' or request.args.get('type') != 'all' or request.args.get('min_price') or request.args.get('max_price') %}
-                    No devices match your search criteria. Try changing your filters.
-                    {% else %}
-                    No devices available. Add some products in the admin panel or upload a CSV file.
-                    {% endif %}
-                </p>
+    <div class="col-12">
+        <div class="empty-state">
+            <i class="bi bi-cpu"></i>
+            <h3>No IoT Devices Found</h3>
+            <p>
+                {% if search_query or request.args.get('availability') != 'all' or request.args.get('type') != 'all' or
+                request.args.get('min_price') or request.args.get('max_price') %}
+                No devices match your search criteria. Try adjusting your filters.
+                {% else %}
+                No devices available. Add some products in the admin panel or upload a CSV file.
+                {% endif %}
+            </p>
+            <div class="d-flex gap-2 justify-content-center flex-wrap">
                 <a href="{{ url_for('home') }}" class="btn btn-primary">
                     <i class="bi bi-arrow-clockwise"></i> Clear Filters
                 </a>
                 {% if current_user.is_authenticated %}
-                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-success ms-2">
-                    <i class="bi bi-plus-circle"></i> Add Products
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-success">
+                    <i class="bi bi-plus-circle-fill"></i> Add Products
                 </a>
                 {% endif %}
             </div>
         </div>
+    </div>
     {% endif %}
 </div>
 
-<!-- Stats -->
+<!-- Stats Section -->
 {% if products %}
-<div class="row mt-5">
+<div class="row mt-5 stats-section">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
                 <div class="row text-center">
-                    <div class="col-md-3">
+                    <div class="col-md-3 col-6 mb-3 mb-md-0">
                         <h3>{{ products|length }}</h3>
-                        <p class="text-muted">Total Devices</p>
+                        <p>Total Devices</p>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3 col-6 mb-3 mb-md-0">
                         <h3>{{ products|selectattr('availability', 'equalto', 'In Stock')|list|length }}</h3>
-                        <p class="text-muted">In Stock</p>
+                        <p>In Stock</p>
                     </div>
-                    <div class="col-md-3">
-                        <h3 class="format-price">{{ "%.2f"|format((products|sum(attribute='price')|float)/products|length if products|length > 0 else 0) }}</h3>
-                        <p class="text-muted">Avg Price</p>
+                    <div class="col-md-3 col-6">
+                        <h3 class="format-price">{{
+                            "%.0f"|format((products|sum(attribute='price')|float)/products|length if products|length > 0
+                            else 0) }}</h3>
+                        <p>Avg Price</p>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3 col-6">
                         <h3>{{ products|sum(attribute='quantity') }}</h3>
-                        <p class="text-muted">Total Units</p>
+                        <p>Total Units</p>
                     </div>
                 </div>
             </div>
@@ -497,17 +520,20 @@
 
 <!-- All Types Modal -->
 <div class="modal fade" id="allTypesModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">All Device Types</h5>
+                <h5 class="modal-title">
+                    <i class="bi bi-tags-fill me-2"></i>All Device Types
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="d-flex flex-wrap">
                     {% for type in types %}
                     {% if type %}
-                    <span class="device-type-badge mb-2" onclick="setTypeFilter('{{ type }}'); $('#allTypesModal').modal('hide');">
+                    <span class="device-type-badge mb-2"
+                        onclick="setTypeFilter('{{ type }}'); bootstrap.Modal.getInstance(document.getElementById('allTypesModal')).hide();">
                         {{ type }}
                     </span>
                     {% endif %}
@@ -522,99 +548,86 @@
 {% block extra_js %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.0/nouislider.min.js"></script>
 <script>
-function setTypeFilter(type) {
-    document.querySelector('select[name="type"]').value = type;
-    document.querySelector('form').submit();
-}
-
-function removeFilter(filterName) {
-    const url = new URL(window.location.href);
-    url.searchParams.delete(filterName);
-    window.location.href = url.toString();
-}
-
-function removePriceFilter() {
-    const url = new URL(window.location.href);
-    url.searchParams.delete('min_price');
-    url.searchParams.delete('max_price');
-    window.location.href = url.toString();
-}
-
-// Format price with Indian numbering system
-function formatIndianNumber(num) {
-    if (isNaN(num)) return '0';
-    
-    num = parseFloat(num);
-    if (num >= 10000000) {
-        return (num / 10000000).toFixed(1) + ' Cr';
-    } else if (num >= 100000) {
-        return (num / 100000).toFixed(1) + ' L';
-    } else if (num >= 1000) {
-        return (num / 1000).toFixed(1) + ' K';
+    function setTypeFilter(type) {
+        document.querySelector('select[name="type"]').value = type;
+        document.querySelector('form').submit();
     }
-    return num.toLocaleString('en-IN');
-}
 
-// Initialize price slider
-document.addEventListener('DOMContentLoaded', function() {
-    const priceRange = document.getElementById('priceRange');
-    const minPrice = document.getElementById('minPrice');
-    const maxPrice = document.getElementById('maxPrice');
-    const minPriceValue = document.getElementById('minPriceValue');
-    const maxPriceValue = document.getElementById('maxPriceValue');
-    
-    if (priceRange) {
-        const minVal = parseInt(minPrice.value) || 0;
-        const maxVal = parseInt(maxPrice.value) || 50000;
-        
-        noUiSlider.create(priceRange, {
-            start: [minVal, maxVal],
-            connect: true,
-            range: {
-                'min': 0,
-                'max': 50000
-            },
-            step: 100,
-            format: {
-                to: function(value) {
-                    return Math.round(value);
-                },
-                from: function(value) {
-                    return Number(value);
+    function removeFilter(filterName) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete(filterName);
+        window.location.href = url.toString();
+    }
+
+    function removePriceFilter() {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('min_price');
+        url.searchParams.delete('max_price');
+        window.location.href = url.toString();
+    }
+
+    function formatIndianNumber(num) {
+        if (isNaN(num)) return '0';
+        num = parseFloat(num);
+        if (num >= 10000000) {
+            return (num / 10000000).toFixed(1) + ' Cr';
+        } else if (num >= 100000) {
+            return (num / 100000).toFixed(1) + ' L';
+        } else if (num >= 1000) {
+            return (num / 1000).toFixed(1) + ' K';
+        }
+        return num.toLocaleString('en-IN');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const priceRange = document.getElementById('priceRange');
+        const minPrice = document.getElementById('minPrice');
+        const maxPrice = document.getElementById('maxPrice');
+        const minPriceValue = document.getElementById('minPriceValue');
+        const maxPriceValue = document.getElementById('maxPriceValue');
+
+        if (priceRange) {
+            const minVal = parseInt(minPrice.value) || 0;
+            const maxVal = parseInt(maxPrice.value) || 50000;
+
+            noUiSlider.create(priceRange, {
+                start: [minVal, maxVal],
+                connect: true,
+                range: { 'min': 0, 'max': 50000 },
+                step: 100,
+                format: {
+                    to: value => Math.round(value),
+                    from: value => Number(value)
                 }
+            });
+
+            priceRange.noUiSlider.on('update', function (values) {
+                const min = Math.round(values[0]);
+                const max = Math.round(values[1]);
+                minPrice.value = min;
+                maxPrice.value = max;
+                minPriceValue.textContent = formatIndianNumber(min);
+                maxPriceValue.textContent = formatIndianNumber(max);
+            });
+        }
+
+        document.querySelectorAll('.price-tag').forEach(element => {
+            const text = element.textContent;
+            const price = parseFloat(text.replace(/[^0-9.-]+/g, ''));
+            if (!isNaN(price)) {
+                element.textContent = price.toLocaleString('en-IN');
             }
         });
-        
-        priceRange.noUiSlider.on('update', function(values) {
-            const min = Math.round(values[0]);
-            const max = Math.round(values[1]);
-            
-            minPrice.value = min;
-            maxPrice.value = max;
-            minPriceValue.textContent = formatIndianNumber(min);
-            maxPriceValue.textContent = formatIndianNumber(max);
-        });
-    }
-    
-    // Format all price displays on page
-    document.querySelectorAll('.price-tag').forEach(element => {
-        const text = element.textContent;
-        const price = parseFloat(text.replace(/[^0-9.-]+/g, ''));
-        if (!isNaN(price)) {
-            element.textContent = price.toLocaleString('en-IN');
+
+        const totalValue = document.querySelector('.total-value-card h3');
+        if (totalValue) {
+            const text = totalValue.textContent;
+            const value = parseFloat(text.replace(/[^0-9.-]+/g, ''));
+            if (!isNaN(value)) {
+                totalValue.textContent = '₹' + value.toLocaleString('en-IN');
+            }
         }
     });
-    
-    // Format total value
-    const totalValue = document.querySelector('.total-value-card h3');
-    if (totalValue) {
-        const text = totalValue.textContent;
-        const value = parseFloat(text.replace(/[^0-9.-]+/g, ''));
-        if (!isNaN(value)) {
-            totalValue.textContent = value.toLocaleString('en-IN');
-        }
-    }
-});
 </script>
 
 <!-- Volta Floating Button -->
@@ -624,32 +637,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- Volta Chat Modal -->
 <div class="modal fade" id="voltaChatModal" tabindex="-1" aria-labelledby="voltaChatLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-info text-white">
+            <div class="modal-header" style="background: var(--gradient-accent); color: white;">
                 <h5 class="modal-title" id="voltaChatLabel">
-                    <i class="bi bi-robot"></i> Volta - Your IoT Assistant
+                    <i class="bi bi-robot me-2"></i>Volta - Your IoT Assistant
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="voltaChatContainer" style="height: 400px; overflow-y: auto; background: #f8f9fa; border-radius: 8px; padding: 15px;">
-                    <div id="chatMessages" style="display: flex; flex-direction: column; gap: 10px;">
+                <div id="voltaChatContainer"
+                    style="height: 400px; overflow-y: auto; background: var(--bg-secondary); border-radius: var(--border-radius); padding: var(--space-4);">
+                    <div id="chatMessages" style="display: flex; flex-direction: column; gap: var(--space-3);">
                         <div class="alert alert-info" role="alert">
-                            <strong>Welcome to Volta!</strong> I'm your IoT assistant. Ask me anything about IoT devices, AI/ML, Cyber Security, and Computer Science.
+                            <strong>Welcome to Volta!</strong> I'm your IoT assistant. Ask me anything about IoT
+                            devices, AI/ML, Cyber Security, and Computer Science.
                         </div>
                     </div>
-                    <div id="voltaTyping" style="display: none; text-align: center; padding: 10px;">
-                        <span class="spinner-border spinner-border-sm text-info me-2"></span>
+                    <div id="voltaTyping" style="display: none; text-align: center; padding: var(--space-3);">
+                        <span class="spinner-border spinner-border-sm me-2"></span>
                         <small class="text-muted">Volta is thinking...</small>
                     </div>
                 </div>
                 <div class="mt-3">
                     <div class="input-group">
-                        <input type="text" class="form-control" id="voltaInput" placeholder="Ask Volta..." 
-                               onkeypress="if(event.key==='Enter') sendVoltaMessage()">
+                        <input type="text" class="form-control" id="voltaInput" placeholder="Ask Volta..."
+                            onkeypress="if(event.key==='Enter') sendVoltaMessage()">
                         <button class="btn btn-info" type="button" onclick="sendVoltaMessage()">
-                            <i class="bi bi-send"></i> Send
+                            <i class="bi bi-send-fill"></i> Send
                         </button>
                     </div>
                 </div>
@@ -658,125 +674,71 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 </div>
 
-<style>
-.volta-floating-btn {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 999;
-    transition: all 0.3s ease;
-    border: none;
-}
-
-.volta-floating-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 16px rgba(6, 182, 212, 0.4);
-}
-
-.volta-floating-btn:active {
-    transform: scale(0.95);
-}
-
-@media (max-width: 768px) {
-    .volta-floating-btn {
-        bottom: 20px;
-        right: 20px;
-        width: 50px;
-        height: 50px;
-        font-size: 24px;
-    }
-}
-</style>
-
 <script>
-function openVoltaChat() {
-    const modal = new bootstrap.Modal(document.getElementById('voltaChatModal'));
-    modal.show();
-    // Focus input when modal is shown
-    setTimeout(() => document.getElementById('voltaInput').focus(), 500);
-}
+    function openVoltaChat() {
+        const modal = new bootstrap.Modal(document.getElementById('voltaChatModal'));
+        modal.show();
+        setTimeout(() => document.getElementById('voltaInput').focus(), 500);
+    }
 
-function sendVoltaMessage() {
-    const input = document.getElementById('voltaInput');
-    const message = input.value.trim();
-    
-    if (!message) return;
-    
-    // Add user message to chat
-    const chatMessages = document.getElementById('chatMessages');
-    const userMessageDiv = document.createElement('div');
-    userMessageDiv.className = 'alert alert-primary text-end mb-0';
-    userMessageDiv.textContent = message;
-    chatMessages.appendChild(userMessageDiv);
-    
-    input.value = '';
-    
-    // Show typing indicator
-    document.getElementById('voltaTyping').style.display = 'block';
-    
-    // Scroll to bottom
-    const container = document.getElementById('voltaChatContainer');
-    setTimeout(() => container.scrollTop = container.scrollHeight, 50);
-    
-    // Send to API
-    fetch('{{ url_for("api_chat") }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            message: message
+    function sendVoltaMessage() {
+        const input = document.getElementById('voltaInput');
+        const message = input.value.trim();
+
+        if (!message) return;
+
+        const chatMessages = document.getElementById('chatMessages');
+        const userMessageDiv = document.createElement('div');
+        userMessageDiv.className = 'alert alert-primary text-end mb-0';
+        userMessageDiv.style.background = 'var(--gradient-primary)';
+        userMessageDiv.style.color = 'white';
+        userMessageDiv.style.border = 'none';
+        userMessageDiv.textContent = message;
+        chatMessages.appendChild(userMessageDiv);
+
+        input.value = '';
+        document.getElementById('voltaTyping').style.display = 'block';
+
+        const container = document.getElementById('voltaChatContainer');
+        setTimeout(() => container.scrollTop = container.scrollHeight, 50);
+
+        fetch('{{ url_for("api_chat") }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: message })
         })
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(data => Promise.reject(data));
-        }
-        return response.json();
-    })
-    .then(data => {
-        document.getElementById('voltaTyping').style.display = 'none';
-        
-        if (data.success && data.response) {
-            const responseDiv = document.createElement('div');
-            responseDiv.className = 'alert alert-light mb-0 border-start border-info';
-            responseDiv.innerHTML = `<strong>Volta:</strong> ${data.response}`;
-            chatMessages.appendChild(responseDiv);
-        } else if (data.response && !data.success) {
-            const responseDiv = document.createElement('div');
-            responseDiv.className = 'alert alert-light mb-0 border-start border-info';
-            responseDiv.innerHTML = `<strong>Volta:</strong> ${data.response}`;
-            chatMessages.appendChild(responseDiv);
-        } else if (data.error) {
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'alert alert-danger mb-0';
-            errorDiv.innerHTML = `<strong>Error:</strong> ${data.error}`;
-            chatMessages.appendChild(errorDiv);
-        }
-        
-        setTimeout(() => container.scrollTop = container.scrollHeight, 50);
-    })
-    .catch(error => {
-        document.getElementById('voltaTyping').style.display = 'none';
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'alert alert-danger mb-0';
-        const errorMsg = error.error || error.message || 'Unknown error occurred';
-        errorDiv.innerHTML = `<strong>Error:</strong> ${errorMsg}`;
-        chatMessages.appendChild(errorDiv);
-        
-        setTimeout(() => container.scrollTop = container.scrollHeight, 50);
-    });
-}
+            .then(response => {
+                if (!response.ok) return response.json().then(data => Promise.reject(data));
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('voltaTyping').style.display = 'none';
+
+                if (data.success && data.response || data.response) {
+                    const responseDiv = document.createElement('div');
+                    responseDiv.className = 'alert alert-light mb-0';
+                    responseDiv.style.borderLeft = '4px solid var(--accent)';
+                    responseDiv.innerHTML = `<strong style="color: var(--accent);">Volta:</strong> ${data.response}`;
+                    chatMessages.appendChild(responseDiv);
+                } else if (data.error) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'alert alert-danger mb-0';
+                    errorDiv.innerHTML = `<strong>Error:</strong> ${data.error}`;
+                    chatMessages.appendChild(errorDiv);
+                }
+
+                setTimeout(() => container.scrollTop = container.scrollHeight, 50);
+            })
+            .catch(error => {
+                document.getElementById('voltaTyping').style.display = 'none';
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'alert alert-danger mb-0';
+                const errorMsg = error.error || error.message || 'Unknown error occurred';
+                errorDiv.innerHTML = `<strong>Error:</strong> ${errorMsg}`;
+                chatMessages.appendChild(errorDiv);
+
+                setTimeout(() => container.scrollTop = container.scrollHeight, 50);
+            });
+    }
 </script>
 {% endblock %}
